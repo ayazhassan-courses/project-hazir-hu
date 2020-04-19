@@ -1,3 +1,4 @@
+import 'package:Hazir/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -9,6 +10,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
         primaryTextTheme: TextTheme(title: TextStyle(color: Colors.white)),
         hintColor: Color(0xFFD4C194),
       ),
-      home: LoginPage(),
+      home: SplashScreen(),
     );
   }
 }

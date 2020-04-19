@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
     scraper.name =widget.name;
     try{
       var jsonDataAllCourses = await scraper.allAttendanceDataJSON();
-      var jsonStringAllCourses = jsonEncode(jsonDataAllCourses);
+      String jsonStringAllCourses = jsonEncode(jsonDataAllCourses);
+      AttendanceCache.saveAttendanceCache(jsonStringAllCourses);
       Attendance attendance = Attendance.fromJson(jsonDataAllCourses);
       if (attendance!=null){
         Navigator.of(context).pushReplacement(

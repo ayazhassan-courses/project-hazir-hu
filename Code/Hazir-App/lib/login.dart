@@ -108,12 +108,12 @@ class _LoginPageState extends State<LoginPage> {
           );
           String name = await scraper.login();
           if (name != null) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (BuildContext context) => LoadingScreen(
                       name: name,
                       userId: 'sa06195',
                       password: '2ndSEMESTER2020',
-                    )),ModalRoute.withName('/'),);
+                    )));
           }
         },
         padding: EdgeInsets.all(12),
