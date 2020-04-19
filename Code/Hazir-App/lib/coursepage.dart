@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'models/attendance-single-course.dart';
 
 class CoursePage extends StatefulWidget {
-  AttendanceSingleCourse attendanceSingleCourse;
-  CoursePage({this.attendanceSingleCourse});
+  Coursesdata coursedata;
+  CoursePage({this.coursedata});
   @override
   _CoursePageState createState() => _CoursePageState();
 }
@@ -18,7 +18,7 @@ class _CoursePageState extends State<CoursePage> {
     var divheight = MediaQuery.of(context).size.height;
     var divwidth = MediaQuery.of(context).size.width;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF671a94), //or set color with: Color(0xFF0000FF)
+      statusBarColor: Color(0xFF5C2B62), //or set color with: Color(0xFF0000FF)
     ));
     return SafeArea(
       child: Scaffold(
@@ -32,13 +32,13 @@ class _CoursePageState extends State<CoursePage> {
               decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(35),
-                      bottomRight: Radius.circular(35))),
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
-                    height: divheight / 2 * 0.05,
+                    height: divheight / 4 * 0.05,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -46,14 +46,13 @@ class _CoursePageState extends State<CoursePage> {
                       children: <Widget>[
                         CourseDetailsWidget(
                           title: 'Course Name',
-                          content: '${widget.attendanceSingleCourse.courseName.toUpperCase()}',
+                          content: '${widget.coursedata.coursename.toUpperCase()}',
                         )
                       ],
                     ),
                   ),
-                  Spacer(),
                   SizedBox(
-                    height: 5,
+                    height: 10,
                   ),
                   Padding(
                     padding:
@@ -62,31 +61,19 @@ class _CoursePageState extends State<CoursePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         CourseDetailsWidget(
-                          title: 'Subject',
-                          content: '${widget.attendanceSingleCourse
-                              .courseCode}',
-                        ),
-                        Spacer(),
-                        CourseDetailsWidget(
-                          title: 'Code',
-                          content: '${widget.attendanceSingleCourse.classCode}',
-                        ),
-                        Spacer(),
-                        CourseDetailsWidget(
-                          title: 'Component',
-                          content: '${widget.attendanceSingleCourse
-                              .courseComponent}',
+                          title: 'Section',
+                          content: 'L4',
                         ),
                         Spacer(),
                         CourseDetailsWidget(
                           title: 'Attendence',
-                          content: '${widget.attendanceSingleCourse.attendancePercentage}%',
+                          content: '${widget.coursedata.attendancepercentage}%',
                         )
                       ],
                     ),
                   ),
                   SizedBox(
-                    height: 9,
+                    height: 8,
                   ),
 
                 ],
@@ -95,19 +82,12 @@ class _CoursePageState extends State<CoursePage> {
             Padding(
               padding: const EdgeInsets.only(right: 5, left: 5),
               child: Container(
-                height: divheight * 0.8015,
+                height: divheight * 0.78,
                 width: divwidth,
 
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: DataTable(
-                    dataRowHeight: 40,
-                    // we will calculate this a/c to the numbers of classes
-                    headingRowHeight: 60.0,
-                    columnSpacing: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.5,
                     columns: [
                       DataColumn(label: Text('Date')),
                       DataColumn(label: Text('Status')),
@@ -353,7 +333,7 @@ class CourseDetailsWidget extends StatelessWidget {
         Text(
           content.toUpperCase(),
           style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
         )
       ],
     );

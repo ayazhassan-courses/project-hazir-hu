@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-
-import 'attendence.dart';
+import 'package:Hazir/scripts/attendancescraper.dart';
 import 'main.dart';
 import 'models/attendance.dart';
 
@@ -20,7 +21,6 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   double percent=0.0;
-  var allCoursesList;
   double _opacity = 0;
 
 
@@ -28,24 +28,38 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   Future<void> fetchUserData() async {
     AttendanceScraper scraper = AttendanceScraper(
-      context: context,
       userId:  widget.userId,
       password: widget.password,
       progressListener: (p){
         setState(() {
           percent=p;
         });
-
       }
     );
-
-    allCoursesList= await scraper.allCourses();
-    if(allCoursesList!=null) {
-      Attendance attendance = new Attendance(name: widget.name.split(' ').last,lastUpdated: DateTime.now(),allCoursesList: allCoursesList);
-      Navigator.of(context).pushReplacement(
-          CupertinoPageRoute(builder: (BuildContext context) =>
+    scraper.name =widget.name;
+    try{
+      var jsonDataAllCourses = await scraper.allAttendanceDataJSON();
+      var jsonStringAllCourses = jsonEncode(jsonDataAllCourses);
+      Attendance attendance = Attendance.fromJson(jsonDataAllCourses);
+      if (attendance!=null){
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) =>
               HazirHome(attendance: attendance,)));
+
+      }
+    }catch(e){
+      print('Exception $e');
     }
+
+
+
+//    allCoursesList= await scraper.allCourses();
+//    if(allCoursesList!=null) {
+//      Attendance attendance = new Attendance(name: widget.name.split(' ').last,lastUpdated: DateTime.now(),allCoursesList: allCoursesList);
+//      Navigator.of(context).pushReplacement(
+//          MaterialPageRoute(builder: (BuildContext context) =>
+//              HazirHome(attendance: attendance,)));
+//    }
   }
   Future<void> delay() async {
     await Future.delayed(const Duration(seconds: 1), (){});
@@ -88,7 +102,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                    child: FlareActor("assets/animation.flr", alignment:Alignment.center, fit:BoxFit.fitHeight, animation:"coding")),
                 SizedBox(height: 60,),
                 Text('Hello,',style: TextStyle(fontSize: 37,fontWeight: FontWeight.normal),),
-                Text('${widget.name.split(',').last} ${widget.name.split(',').first}',style: TextStyle(fontSize: 47,fontWeight: FontWeight.bold),),
+                Text(widget.name.split(' ').last,style: TextStyle(fontSize: 47,fontWeight: FontWeight.bold),),
 
 
                 Text('We are collecting your data from Habib\'s server please be patient. This step is only for the first time.',style: TextStyle(fontSize: 16,fontWeight: FontWeight.normal,color: Colors.black38),),
