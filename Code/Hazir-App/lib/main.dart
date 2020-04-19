@@ -1,6 +1,7 @@
 import 'package:Hazir/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'coursepage.dart';
 import 'login.dart';
@@ -95,12 +96,12 @@ class _HazirHomeState extends State<HazirHome> {
                               fontWeight: FontWeight.bold,
                               fontSize: divheight*0.0438),
                         ),
-                        Text('5th March 2020',
+                        Text('Last Updated',
                             style:
-                                TextStyle(color: Colors.white, fontSize: divheight*0.0219)),
-                        Text('Week 5',
+                                TextStyle(color: Colors.white, fontSize: divheight*0.0203)),
+                        Text('${DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.attendance.lastupdated))}',
                             style:
-                                TextStyle(color: Colors.white, fontSize: divheight*0.0204)),
+                                TextStyle(color: Colors.white, fontSize: divheight*0.0203)),
                       ],
                     ),
                   ),

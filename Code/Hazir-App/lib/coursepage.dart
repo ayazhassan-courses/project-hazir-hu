@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 import 'models/attendance-single-course.dart';
+import 'models/attendance-single-day.dart';
 
 class CoursePage extends StatefulWidget {
   Coursesdata coursedata;
@@ -12,6 +14,48 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
+  String formatDate(String date) {
+    String formattedDate;
+    print(date);
+    final f = new DateFormat('MM/dd/yyyy');
+    formattedDate = DateFormat.yMMMd().format(f.parse(date));
+    return formattedDate;
+  }
+
+  Color getStatusColor(String status) {
+    if (status == 'Present') {
+      return Theme.of(context).primaryColor;
+    } else if (status == 'Absent') {
+      return Theme.of(context).accentColor;
+    } else {
+      return Colors.grey;
+    }
+  }
+
+  List<DataRow> getRows() {
+    List<DataRow> rows = [];
+    for (Attendancesingleday attendance
+        in widget.coursedata.attendancesingleday) {
+      rows.add(
+        DataRow(
+          cells: [
+            DataCell(
+              Text(formatDate(attendance.date)),
+            ),
+            DataCell(
+              Text(
+                attendance.status,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: getStatusColor(attendance.status)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return rows;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +90,8 @@ class _CoursePageState extends State<CoursePage> {
                       children: <Widget>[
                         CourseDetailsWidget(
                           title: 'Course Name',
-                          content: '${widget.coursedata.coursename.toUpperCase()}',
+                          content:
+                              '${widget.coursedata.coursename.toUpperCase()}',
                         )
                       ],
                     ),
@@ -61,8 +106,13 @@ class _CoursePageState extends State<CoursePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         CourseDetailsWidget(
-                          title: 'Section',
-                          content: 'L4',
+                          title: 'Course Code',
+                          content: widget.coursedata.coursecode,
+                        ),
+                        Spacer(),
+                        CourseDetailsWidget(
+                          title: 'Component',
+                          content: widget.coursedata.component,
                         ),
                         Spacer(),
                         CourseDetailsWidget(
@@ -75,7 +125,6 @@ class _CoursePageState extends State<CoursePage> {
                   SizedBox(
                     height: 8,
                   ),
-
                 ],
               ),
             ),
@@ -84,231 +133,17 @@ class _CoursePageState extends State<CoursePage> {
               child: Container(
                 height: divheight * 0.78,
                 width: divwidth,
-
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('Date')),
-                      DataColumn(label: Text('Status')),
-                    ],
-                    rows: [
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Absent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).accentColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Prsent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Absent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).accentColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Absent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).accentColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Absent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).accentColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      DataRow(
-                        cells: [
-                          DataCell(
-                            Text('01 January 2020'),
-                          ),
-                          DataCell(
-                            Text(
-                              'Absent',
-                              style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).accentColor),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-                ),
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('Date')),
+                        DataColumn(label: Text('Status')),
+                      ],
+                      rows: getRows(),
+                    )),
               ),
             ),
-
-
           ],
         ),
       ),
