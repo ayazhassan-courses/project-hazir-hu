@@ -16,7 +16,7 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   String formatDate(String date) {
     String formattedDate;
-    print(date);
+
     final f = new DateFormat('MM/dd/yyyy');
     formattedDate = DateFormat.yMMMd().format(f.parse(date));
     return formattedDate;

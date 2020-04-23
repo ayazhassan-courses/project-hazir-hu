@@ -7,20 +7,14 @@ class AttendanceCache{
   }
 
   static Future<String> getAttendanceCache() async {
-    print('got shared');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    //Return String
     String jsonStringAllCourses = prefs.getString('jsonStringAllCourses');
-
     return jsonStringAllCourses;
   }
 
-  Future<void> removeAttendanceCache() async {
+  static Future<void> removeAttendanceCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //Return String
     prefs.remove('jsonStringAllCourses');
-
   }
 
 

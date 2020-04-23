@@ -1,6 +1,9 @@
 import 'dart:collection';
+import 'package:Hazir/models/attendance.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'attendancecache.dart';
 
 
 class AttendanceScraper{
@@ -16,7 +19,7 @@ class AttendanceScraper{
   
 
   //Extracts data from the given url
-  Future<dynamic> getJsonData(
+  Future<dynamic> _getJsonData(
       String url, String userName, String password) async {
     http.Response response;
     print('Getting data from url $url');
@@ -27,8 +30,8 @@ class AttendanceScraper{
       throw ('Couldnot connect to server please check your internet connection and try again.');
     }
     if (response.statusCode == 200 && response != null) {
-      //Here the response is recived by the request that means internet is working fine the only
-      // excpetions that can arrive now are the password or timed out etc which are given in the response already
+      //Here the response is received by the request that means internet is working fine the only
+      // exceptions that can arrive now are the password or timed out etc which are given in the response already
 
       //Now as we have gotten response from the server it might be an error or it might be a json data.
       //In current api this happens when password or id is not correct.
@@ -55,12 +58,12 @@ class AttendanceScraper{
     }
   }
 
-  //The login function perfoms the user login and when the login is sucessfull it returns a String containing the name
+  //The login function performs the user login and when the login is sucessfull it returns a String containing the name
   //and id of that user in case the login request is failed it return null
   Future<String> login() async {
     String url =
         "https://hazirhu.herokuapp.com/flogin?id=$userId&pwd=$password";
-    jsonResponse = await getJsonData(url, userId, password);
+    jsonResponse = await _getJsonData(url, userId, password);
     if (jsonResponse != null) {
       name = jsonResponse['name'];
       //here user's first name is returned
@@ -80,7 +83,7 @@ class AttendanceScraper{
         "https://hazirhu.herokuapp.com/allcourses?id=$userId&pwd=$password";
     //The following JSONResponse consists of all the courses including the dropped ones and the
     //enrolled ones
-    jsonResponse = await getJsonData(url, userId, password);
+    jsonResponse = await _getJsonData(url, userId, password);
     if (jsonResponse != null) {
       //JSONData is recieved
       courses = jsonResponse['courses'];
@@ -122,7 +125,7 @@ class AttendanceScraper{
     var course;
     String url =
         "https://hazirhu.herokuapp.com/removedropped?id=$userId&pwd=$password&C=$C";
-    jsonResponse = await getJsonData(url, userId, password);
+    jsonResponse = await _getJsonData(url, userId, password);
     if (jsonResponse != null) {
       course = jsonResponse['C$C'];
 
@@ -134,7 +137,7 @@ class AttendanceScraper{
         var jsonResponseCourseDetails;
         String subUrl =
             "https://hazirhu.herokuapp.com/haziri?id=$userId&pwd=$password&C=$C";
-        jsonResponseCourseDetails = await getJsonData(subUrl, userId, password);
+        jsonResponseCourseDetails = await _getJsonData(subUrl, userId, password);
         //attendanceSingleCourse contains some meta about the Cth course.
         //to get more details about the Cth course the request is sent to subUrl.
         //which gathers almost all the missing data.
@@ -172,11 +175,11 @@ class AttendanceScraper{
         return attendancesinglecourse;
       } else {
         //If a course is removed the it is removed from the courses list that was displayed in all courses section
-        print('${C} Course dropped');
+        print('$C Course dropped');
       }
     } else {
       //There is error while removing the course from the course list
-      //This might arrise due to multiple call of the same course
+      //This might arrive due to multiple call of the same course
       //double button click
       //another user trying to access the api
       return null;
@@ -192,4 +195,29 @@ class AttendanceScraper{
     };
     return jsondata;
   }
+
+  //Gets the data in the JSON format and return the Attendance.
+  //Meanwhile doing this also stores the data in the cache.
+  Future<Attendance> allAttendanceData({bool saveCache}) async {
+    var jsonDataAllCourses = await allAttendanceDataJSON();
+    String jsonStringAllCourses = jsonEncode(jsonDataAllCourses);
+    Attendance attendance = Attendance.fromJson(jsonDataAllCourses);
+    if (saveCache && jsonStringAllCourses!=null){
+      AttendanceCache.saveAttendanceCache(jsonStringAllCourses);
+    }
+    return attendance;
+  }
+
+  //Checks for any cache data in Attendance if it finds one then it returns an Attendance object
+  //else it returns an empty instance of attendance
+ Future<Attendance> getCachedAttendance() async {
+    Attendance attendance = Attendance();
+    String attendanceCache = await AttendanceCache.getAttendanceCache();
+    if (attendanceCache!=null){
+      var jsonDataAllCourses =  jsonDecode(attendanceCache);
+      attendance = Attendance.fromJson(jsonDataAllCourses);
+    }
+    return attendance;
+  }
+
 }

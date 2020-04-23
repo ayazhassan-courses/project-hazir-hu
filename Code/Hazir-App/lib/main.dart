@@ -1,29 +1,20 @@
+import 'package:Hazir/scripts/background_attendance_scrapper.dart';
+import 'package:Hazir/scripts/notification-provider.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'coursepage.dart';
-import 'login.dart';
 import 'models/attendance.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hazir Home Page',
-      theme: ThemeData(
-        primaryColor: Color(0xFF5C2B62),
-        accentColor: Color(0xFFD4C194),
-        primaryTextTheme: TextTheme(title: TextStyle(color: Colors.white)),
-        hintColor: Color(0xFFD4C194),
-      ),
-      home: SplashScreen(),
-    );
+    return SplashScreen();
   }
 }
 
@@ -35,8 +26,6 @@ class HazirHome extends StatefulWidget {
 }
 
 class _HazirHomeState extends State<HazirHome> {
-
-
   @override
   Widget build(BuildContext context) {
     var divheight = MediaQuery.of(context).size.height;
@@ -66,18 +55,28 @@ class _HazirHomeState extends State<HazirHome> {
                     height: divheight / 4 * 0.05,
                   ),
                   Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: divheight*0.0365),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: divheight * 0.0365),
                     child: Row(
                       children: <Widget>[
                         Text(
                           'Hello,',
-                          style: TextStyle(color: Colors.white, fontSize: divheight*0.0278),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: divheight * 0.0278),
                         ),
                         Spacer(),
-                        Icon(
-                          Icons.notifications_none,
-                          color: Colors.white,
-                          size: divheight*0.0278,
+                        GestureDetector(
+                          onTap: () async {
+                            BackgroundAttendanceScraper bgScrapper = BackgroundAttendanceScraper(userId: 'sa06195',
+                              password: '2ndSEMESTER2020',progressListener: (p){print(p);});
+                            bgScrapper.updateData();
+                          },
+                          child: Icon(
+                            Icons.notifications_none,
+                            color: Colors.white,
+                            size: divheight * 0.0278,
+                          ),
                         ),
                       ],
                     ),
@@ -94,14 +93,17 @@ class _HazirHomeState extends State<HazirHome> {
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: divheight*0.0438),
+                              fontSize: divheight * 0.0438),
                         ),
                         Text('Last Updated',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: divheight*0.0203)),
-                        Text('${DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.attendance.lastupdated))}',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: divheight*0.0203)),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: divheight * 0.0203)),
+                        Text(
+                            '${DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.attendance.lastupdated))}',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: divheight * 0.0203)),
                       ],
                     ),
                   ),
@@ -124,15 +126,20 @@ class _HazirHomeState extends State<HazirHome> {
                         mainAxisSpacing: 5,
                         childAspectRatio: 0.68),
                     itemBuilder: (BuildContext context, int index) {
-                      int percentage = widget.attendance.coursesdata[index].attendancepercentage;
-                      Color cardFocusColor = percentage>85 ? Theme.of(context).primaryColor :Theme.of(context).accentColor;
+                      int percentage = widget
+                          .attendance.coursesdata[index].attendancepercentage;
+                      Color cardFocusColor = percentage > 85
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).accentColor;
                       return GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Navigator.push(
                               context,
                               new MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                 CoursePage(coursedata: widget.attendance.coursesdata[index],)));
+                                  builder: (BuildContext context) => CoursePage(
+                                        coursedata: widget
+                                            .attendance.coursesdata[index],
+                                      )));
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -150,25 +157,40 @@ class _HazirHomeState extends State<HazirHome> {
                                   radius: 100.0,
                                   lineWidth: 13.0,
                                   animation: true,
-                                  percent: percentage/100,
+                                  percent: percentage / 100,
                                   center: new Text(
                                     "${widget.attendance.coursesdata[index].attendancepercentage}%",
-                                    style:
-                                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                                    style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25.0),
                                   ),
                                   footer: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                    SizedBox(
-                                    height: 8,
-                                  ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
                                       Text(
                                         "${widget.attendance.coursesdata[index].coursename}",
-                                        style:
-                                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0,),textAlign: TextAlign.center,softWrap: true,maxLines: 2,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.0,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        maxLines: 2,
                                       ),
-                                      Text("${widget.attendance.coursesdata[index].component}",style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 10.0,color: Color(0xFF8B878B)),maxLines: 1,softWrap: true,)
+                                      Text(
+                                        "${widget.attendance.coursesdata[index].component}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0,
+                                            color: Color(0xFF8B878B)),
+                                        maxLines: 1,
+                                        softWrap: true,
+                                      )
                                     ],
                                   ),
                                   circularStrokeCap: CircularStrokeCap.round,

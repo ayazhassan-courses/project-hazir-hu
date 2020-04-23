@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,10 +37,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
     scraper.name =widget.name;
     try{
-      var jsonDataAllCourses = await scraper.allAttendanceDataJSON();
-      String jsonStringAllCourses = jsonEncode(jsonDataAllCourses);
-      AttendanceCache.saveAttendanceCache(jsonStringAllCourses);
-      Attendance attendance = Attendance.fromJson(jsonDataAllCourses);
+      Attendance attendance = await scraper.allAttendanceData(saveCache: true);
       if (attendance!=null){
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (BuildContext context) =>
@@ -52,20 +47,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }catch(e){
       print('Exception $e');
     }
-
-
-
-//    allCoursesList= await scraper.allCourses();
-//    if(allCoursesList!=null) {
-//      Attendance attendance = new Attendance(name: widget.name.split(' ').last,lastUpdated: DateTime.now(),allCoursesList: allCoursesList);
-//      Navigator.of(context).pushReplacement(
-//          MaterialPageRoute(builder: (BuildContext context) =>
-//              HazirHome(attendance: attendance,)));
-//    }
   }
   Future<void> delay() async {
     await Future.delayed(const Duration(seconds: 1), (){});
-
   }
   void initState() {
     super.initState();
@@ -74,8 +58,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
         _opacity=1.0;
       });
     });
-
-
     fetchUserData().whenComplete(
         (){
           print('done');
@@ -118,7 +100,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   linearStrokeCap: LinearStrokeCap.roundAll,
                   progressColor: Theme.of(context).primaryColor,
                 ),
-
               ],
             ),
           ),
