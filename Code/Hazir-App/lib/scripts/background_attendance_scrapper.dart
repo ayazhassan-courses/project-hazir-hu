@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:Hazir/models/attendance-single-course.dart';
 import 'package:Hazir/models/attendance.dart';
-
 import 'attendancescraper.dart';
 import 'notification-provider.dart';
 import 'notifications.dart';
 
 class BackgroundAttendanceScraper extends AttendanceScraper{
-  BackgroundAttendanceScraper({String userId,String password,Function progressListener}):super(userId : userId,password : password,progressListener:progressListener);
+  BackgroundAttendanceScraper({String userId,String password}):super(userId : userId,password : password);
   List<Notifications> notifications =[];
   Attendance oldAttendance;
   Attendance newAttendance;
@@ -29,8 +26,8 @@ class BackgroundAttendanceScraper extends AttendanceScraper{
     }
     _compareData(){
       Notifications n;
-      List<Coursesdata> oldCourseAttendance = oldAttendance.coursesdata;
-      List<Coursesdata> newCourseAttendance = newAttendance.coursesdata;
+      List<Coursedata> oldCourseAttendance = oldAttendance.coursedata;
+      List<Coursedata> newCourseAttendance = newAttendance.coursedata;
       for( var index = 0 ; index < oldCourseAttendance.length; index++ ) {
         if (identical(oldCourseAttendance[index], newCourseAttendance[index])) {
           //Attendance is same with no changes

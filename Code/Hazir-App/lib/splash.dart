@@ -1,22 +1,17 @@
-import 'dart:convert';
-
-import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/attendancescraper.dart';
 import 'package:flutter/material.dart';
-
 import 'login.dart';
 import 'main.dart';
 import 'models/attendance.dart';
-
 class SplashScreen extends StatefulWidget {
-
-
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
+
 class _SplashScreenState extends State<SplashScreen> {
+  
   Future<Attendance> getAttendance(){
     AttendanceScraper attendanceScraper = AttendanceScraper();
     return attendanceScraper.getCachedAttendance();

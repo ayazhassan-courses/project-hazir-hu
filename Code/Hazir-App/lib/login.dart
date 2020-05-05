@@ -2,7 +2,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:Hazir/scripts/attendancescraper.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import 'loadingscreen.dart';
 import 'main.dart';
 
@@ -16,8 +15,6 @@ class _LoginPageState extends State<LoginPage> {
   String username;
   String passwordText;
   bool _showProgress = false;
-
-
   @override
   Widget build(BuildContext context) {
     final logo = SizedBox(
@@ -102,19 +99,11 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _showProgress = !_showProgress;
           });
-          AttendanceScraper scraper = AttendanceScraper(
-            userId: 'sa06195',
-            password: '2ndSEMESTER2020',
-          );
-          String name = await scraper.login();
-          if (name != null) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) => LoadingScreen(
-                      name: name,
-                      userId: 'sa06195',
-                      password: '2ndSEMESTER2020',
-                    )));
-          }
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => LoadingScreen(
+                    userId: 'sa06195',
+                    password: '2ndSEMESTER2020',
+                  )));
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).accentColor,
