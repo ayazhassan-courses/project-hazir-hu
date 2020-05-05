@@ -1,10 +1,10 @@
-class Attendancesingleday {
+class AttendanceSingleDay {
   String date;
   String status;
 
-  Attendancesingleday({this.date, this.status});
+  AttendanceSingleDay({this.date, this.status});
 
-  Attendancesingleday.fromJson(Map<String, dynamic> json) {
+  AttendanceSingleDay.fromJson(Map<String, dynamic> json) {
     date = json['Date'];
     status = json['Status'];
   }

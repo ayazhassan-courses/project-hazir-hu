@@ -1,29 +1,33 @@
+ 
 import 'attendance-single-course.dart';
+
 class Attendance {
+  List<Coursedata> coursedata;
+  String id;
   String username;
   String lastupdated;
-  List<Coursesdata> coursesdata;
-
-  Attendance({this.username, this.lastupdated, this.coursesdata});
+  Attendance({this.coursedata, this.id, this.username});
 
   Attendance.fromJson(Map<String, dynamic> json) {
-    username = json['username'];
-    lastupdated = json['lastupdated'];
-    if (json['coursesdata'] != null) {
-      coursesdata = new List<Coursesdata>();
-      json['coursesdata'].forEach((v) {
-        coursesdata.add(new Coursesdata.fromJson(v));
+    if (json['coursedata'] != null) {
+      coursedata = new List<Coursedata>();
+      json['coursedata'].forEach((v) {
+        coursedata.add(new Coursedata.fromJson(v));
       });
     }
+    id = json['id'];
+    username = json['username'].split(',').last.split(' ').last.trim();
+    lastupdated=DateTime.now().toString();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.coursedata != null) {
+      data['coursedata'] = this.coursedata.map((v) => v.toJson()).toList();
+    }
+    data['id'] = this.id;
     data['username'] = this.username;
     data['lastupdated'] = this.lastupdated;
-    if (this.coursesdata != null) {
-      data['coursesdata'] = this.coursesdata.map((v) => v.toJson()).toList();
-    }
     return data;
   }
 }

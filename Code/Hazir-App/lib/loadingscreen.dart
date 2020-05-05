@@ -8,56 +8,35 @@ import 'main.dart';
 import 'models/attendance.dart';
 
 class LoadingScreen extends StatefulWidget {
-  String name;
+  String name='Habibi';
   String userId;
   String password;
-
-  LoadingScreen({this.name,this.userId,this.password});
-
+  LoadingScreen({this.userId,this.password});
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
-
 class _LoadingScreenState extends State<LoadingScreen> {
-  double percent=0.0;
   double _opacity = 0;
-
-
-
-
   Future<void> fetchUserData() async {
     AttendanceScraper scraper = AttendanceScraper(
       userId:  widget.userId,
       password: widget.password,
-      progressListener: (p){
-        setState(() {
-          percent=p;
-        });
-      }
     );
-    scraper.name =widget.name;
     try{
       Attendance attendance = await scraper.allAttendanceData(saveCache: true);
       if (attendance!=null){
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (BuildContext context) =>
               HazirHome(attendance: attendance,)));
-
       }
     }catch(e){
+      //TODO: Implement toast and navigation on fail.
       print('Exception $e');
     }
   }
-  Future<void> delay() async {
-    await Future.delayed(const Duration(seconds: 1), (){});
-  }
+  
   void initState() {
     super.initState();
-    delay().whenComplete((){
-      setState(() {
-        _opacity=1.0;
-      });
-    });
     fetchUserData().whenComplete(
         (){
           print('done');
@@ -69,10 +48,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     double _width = MediaQuery.of(context).size.width;
     double _height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: AnimatedOpacity(
-        opacity: _opacity,
-        duration: Duration(seconds: 5),
-        child: Container(
+      body:Container(
 
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -91,21 +67,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
                 Text('We are collecting your data from Habib\'s server please be patient. This step is only for the first time.',style: TextStyle(fontSize: 16,fontWeight: FontWeight.normal,color: Colors.black38),),
                 Spacer(),
-                new LinearPercentIndicator(
-                  width: MediaQuery.of(context).size.width - 50,
-                  lineHeight: 20.0,
-                  animationDuration: 2000,
-                  percent: percent/100,
-                  center: Text("${percent.round()}%",style: TextStyle(color: Colors.white),),
-                  linearStrokeCap: LinearStrokeCap.roundAll,
-                  progressColor: Theme.of(context).primaryColor,
-                ),
+                Center(child:CircularProgressIndicator()),
               ],
             ),
           ),
 
         ),
-      ),
+    
     );
   }
 }

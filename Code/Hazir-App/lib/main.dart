@@ -1,5 +1,4 @@
 import 'package:Hazir/scripts/background_attendance_scrapper.dart';
-import 'package:Hazir/scripts/notification-provider.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,7 +68,7 @@ class _HazirHomeState extends State<HazirHome> {
                         GestureDetector(
                           onTap: () async {
                             BackgroundAttendanceScraper bgScrapper = BackgroundAttendanceScraper(userId: 'sa06195',
-                              password: '2ndSEMESTER2020',progressListener: (p){print(p);});
+                              password: '2ndSEMESTER2020');
                             bgScrapper.updateData();
                           },
                           child: Icon(
@@ -119,15 +118,14 @@ class _HazirHomeState extends State<HazirHome> {
                 height: divheight * 0.77,
                 width: double.infinity,
                 child: GridView.builder(
-                    itemCount: widget.attendance.coursesdata.length,
+                    itemCount: widget.attendance.coursedata.length,
                     gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 5,
                         childAspectRatio: 0.68),
                     itemBuilder: (BuildContext context, int index) {
-                      int percentage = widget
-                          .attendance.coursesdata[index].attendancepercentage;
+                      int percentage = widget.attendance.coursedata[index].attendancepercentage.round().toInt();
                       Color cardFocusColor = percentage > 85
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).accentColor;
@@ -138,7 +136,7 @@ class _HazirHomeState extends State<HazirHome> {
                               new MaterialPageRoute(
                                   builder: (BuildContext context) => CoursePage(
                                         coursedata: widget
-                                            .attendance.coursesdata[index],
+                                            .attendance.coursedata[index],
                                       )));
                         },
                         child: Card(
@@ -159,7 +157,7 @@ class _HazirHomeState extends State<HazirHome> {
                                   animation: true,
                                   percent: percentage / 100,
                                   center: new Text(
-                                    "${widget.attendance.coursesdata[index].attendancepercentage}%",
+                                    "${widget.attendance.coursedata[index].attendancepercentage.round()}%",
                                     style: new TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 25.0),
@@ -173,7 +171,7 @@ class _HazirHomeState extends State<HazirHome> {
                                         height: 8,
                                       ),
                                       Text(
-                                        "${widget.attendance.coursesdata[index].coursename}",
+                                        "${widget.attendance.coursedata[index].coursename}",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14.0,
@@ -183,7 +181,7 @@ class _HazirHomeState extends State<HazirHome> {
                                         maxLines: 2,
                                       ),
                                       Text(
-                                        "${widget.attendance.coursesdata[index].component}",
+                                        "${widget.attendance.coursedata[index].coursecomponent}",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 10.0,

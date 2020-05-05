@@ -2,12 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-
 import 'models/attendance-single-course.dart';
 import 'models/attendance-single-day.dart';
-
 class CoursePage extends StatefulWidget {
-  Coursesdata coursedata;
+  Coursedata coursedata;
   CoursePage({this.coursedata});
   @override
   _CoursePageState createState() => _CoursePageState();
@@ -16,7 +14,6 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   String formatDate(String date) {
     String formattedDate;
-
     final f = new DateFormat('MM/dd/yyyy');
     formattedDate = DateFormat.yMMMd().format(f.parse(date));
     return formattedDate;
@@ -34,8 +31,8 @@ class _CoursePageState extends State<CoursePage> {
 
   List<DataRow> getRows() {
     List<DataRow> rows = [];
-    for (Attendancesingleday attendance
-        in widget.coursedata.attendancesingleday) {
+    for (AttendanceSingleDay attendance
+        in widget.coursedata.attendances) {
       rows.add(
         DataRow(
           cells: [
@@ -106,18 +103,18 @@ class _CoursePageState extends State<CoursePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         CourseDetailsWidget(
-                          title: 'Course Code',
-                          content: widget.coursedata.coursecode,
+                          title: 'Section',
+                          content: widget.coursedata.coursesection,
                         ),
                         Spacer(),
                         CourseDetailsWidget(
                           title: 'Component',
-                          content: widget.coursedata.component,
+                          content: widget.coursedata.coursecomponent,
                         ),
                         Spacer(),
                         CourseDetailsWidget(
                           title: 'Attendence',
-                          content: '${widget.coursedata.attendancepercentage}%',
+                          content: '${widget.coursedata.attendancepercentage.round()}%',
                         )
                       ],
                     ),
