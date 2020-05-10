@@ -29,7 +29,7 @@ class _HazirHomeState extends State<HazirHome> {
   Widget build(BuildContext context) {
     var divheight = MediaQuery.of(context).size.height;
     var divwidth = MediaQuery.of(context).size.width;
-    print(divheight);
+    print(widget.attendance.lastupdated);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color(0xFF5C2B62), //or set color with: Color(0xFF0000FF)
     ));
@@ -40,7 +40,7 @@ class _HazirHomeState extends State<HazirHome> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: divheight * 0.17,
+              height: divheight * 0.18,
               width: double.infinity,
               decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,

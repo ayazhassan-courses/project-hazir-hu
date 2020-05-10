@@ -1,4 +1,4 @@
- 
+
 import 'attendance-single-course.dart';
 
 class Attendance {
@@ -16,8 +16,8 @@ class Attendance {
       });
     }
     id = json['id'];
-    username = json['username'].split(',').last.split(' ').last.trim();
-    lastupdated=DateTime.now().toString();
+    username = json['username'].split(',').last.split(' ').last.trim();   
+    lastupdated=json['lastupdated'];
   }
 
   Map<String, dynamic> toJson() {

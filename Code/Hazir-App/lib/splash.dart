@@ -12,9 +12,16 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   
-  Future<Attendance> getAttendance(){
+  Future<Attendance> getAttendance() async {
     AttendanceScraper attendanceScraper = AttendanceScraper();
-    return attendanceScraper.getCachedAttendance();
+    Attendance attendance = await attendanceScraper.getCachedAttendance();
+    return attendance;
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAttendance();
   }
   @override
   Widget build(BuildContext context) {
@@ -28,8 +35,8 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
         home: FutureBuilder(
           future: getAttendance(),
-          builder: (BuildContext context, AsyncSnapshot<Attendance> snapshot) {
-            if (snapshot.hasData) {
+          builder: (context,snapshot) {
+            if (snapshot.hasData && snapshot.connectionState==ConnectionState.done) {
               return snapshot.data.username!=null ? HazirHome(attendance: snapshot.data,) : LoginPage();
             }
             return Container(

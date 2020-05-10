@@ -19,30 +19,32 @@ class BackgroundAttendanceScraper extends AttendanceScraper{
         _compareData();
         for (var notification in notifications){
           notificationProvider.generateNotification(notification);
+          //Future.delayed(const Duration(seconds: 5));
         }
 
       }
 
     }
-    _compareData(){
-      Notifications n;
-      List<Coursedata> oldCourseAttendance = oldAttendance.coursedata;
-      List<Coursedata> newCourseAttendance = newAttendance.coursedata;
-      for( var index = 0 ; index < oldCourseAttendance.length; index++ ) {
-        if (identical(oldCourseAttendance[index], newCourseAttendance[index])) {
-          //Attendance is same with no changes
-          n = Notifications(title: 'No Changes',
-              message: oldCourseAttendance[index].coursename,
-              payload: 'no changes');
-        } else {
-          //Attendance is not the same and has some updates
-          n = Notifications(title: 'Changes',
-              message: oldCourseAttendance[index].coursename,
-              payload: 'changes');
+  void _compareData(){
+  //This algorithm assumes that the order of the response from the api is never
+  //changes however this might not be the case every time in the current api so this should be solved on the api side.
+  //ONLY debugging code
+  newAttendance.coursedata[0].absentclasses = oldAttendance.coursedata[0].absentclasses+1;
+  newAttendance.coursedata[4].absentclasses = oldAttendance.coursedata[4].absentclasses+2;  
+  print('debug message : attendance data updated');
+  if(oldAttendance.coursedata.length==newAttendance.coursedata.length){
+    for(var i=0;i<oldAttendance.coursedata.length;i++){
+      if(oldAttendance.coursedata[i].coursename==newAttendance.coursedata[i].coursename){
+        if(oldAttendance.coursedata[i].absentclasses!=newAttendance.coursedata[i].absentclasses){
+          //Absense dedected.
+          String notificationMessage= (newAttendance.coursedata[i].absentclasses-oldAttendance.coursedata[i].absentclasses).toString()+" absenses dedected in "+newAttendance.coursedata[i].coursename;
+          Notifications notification = Notifications(title: 'Class Absense',message:notificationMessage);
+          notifications.add(notification);
         }
-        notifications.add(n);
       }
 
     }
-
+    print('comparing done');      
+  }
+  }
 }

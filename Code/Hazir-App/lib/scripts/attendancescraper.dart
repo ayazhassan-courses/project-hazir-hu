@@ -41,8 +41,9 @@ class AttendanceScraper {
   //Meanwhile doing this also stores the data in the cache.
   Future<Attendance> allAttendanceData({bool saveCache}) async {
     var jsonDataAllCourses = await getJsonData();
-    String jsonStringAllCourses = jsonEncode(jsonDataAllCourses);
     Attendance attendance = Attendance.fromJson(jsonDataAllCourses);
+    attendance.lastupdated = DateTime.now().toString();
+    String jsonStringAllCourses = jsonEncode(attendance.toJson());
     if (saveCache && jsonStringAllCourses != null) {
       AttendanceCache.saveAttendanceCache(jsonStringAllCourses);
     }
@@ -51,7 +52,6 @@ class AttendanceScraper {
   //Checks for any cache data in Attendance if it finds one then it returns an Attendance object
   //else it returns an empty instance of attendance
    Future<Attendance> getCachedAttendance() async {
-    print('sec run');
     Attendance attendance = Attendance();
     String attendanceCache = await AttendanceCache.getAttendanceCache();
     if (attendanceCache != null) {
