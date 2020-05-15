@@ -1,13 +1,44 @@
+import 'dart:ui';
+
 import 'package:Hazir/scripts/background_attendance_scrapper.dart';
+import 'package:Hazir/scripts/notification-provider.dart';
+import 'package:Hazir/scripts/notifications.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:workmanager/workmanager.dart';
 import 'coursepage.dart';
 import 'models/attendance.dart';
 
-void main() => runApp(MyApp());
+const myTask = "syncWithTheBackEnd";
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) {
+    print("Native called background task");
+    NotificationProvider notificationProvider = NotificationProvider();
+    notificationProvider.intializeNotification();
+    Notifications n = Notifications(title: 'Bg service',message: 'bg service ran');
+    notificationProvider.generateNotification(n);
+    return Future.value(true);
+  });
+}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Workmanager.initialize(
+      callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode: false // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  );
+  Workmanager.registerPeriodicTask(
+      "1",
+      "simplePeriodicTask",
+      // When no frequency is provided the default 15 minutes is set.
+      // Minimum frequency is 15 min. Android will automatically change your frequency to 15 min if you have configured a lower frequency.
+      frequency: Duration(minutes: 15),
+  );
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
