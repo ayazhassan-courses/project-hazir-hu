@@ -70,3 +70,50 @@ exports.login = functions.https.onRequest(async(req, res) => {
         res.send('User Already Exists')
     }
 });
+
+exports.generateNotifications = functions.https.onRequest((request, response) => {
+    //request parameters
+    const userid = request.query.userid;
+    const token = request.query.token;
+    const type = request.query.type;
+    const coursename = request.query.coursename;
+    const date = request.query.date;
+ 
+    if (type == 'absent') {
+        var message = {
+            notification: {
+                title: 'Absent Notification',
+                body: `You were absent on ${date} in ${coursename}.`
+            },
+            data: {
+                coursename: coursename,
+                date: date,
+            },
+            token: token,
+        };
+
+        db.collection('notifications').doc(userid).collection('notifications').doc().set(message);
+
+
+
+        admin.messaging().send(message)
+            .then((res) => {
+
+                response.send({
+                    status: 'Message sent sucessfully',
+                })
+            })
+            .catch((error) => {
+                response.send({
+                    status: 'Failed to send message',
+                });
+
+            });
+
+    }
+
+
+});
+
+
+
