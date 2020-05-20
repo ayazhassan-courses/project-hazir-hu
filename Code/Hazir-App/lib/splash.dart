@@ -1,4 +1,5 @@
-import 'package:Hazir/scripts/attendancescraper.dart';
+import 'package:Hazir/scripts/attendancecache.dart';
+import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'main.dart';
@@ -13,9 +14,11 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   
   Future<Attendance> getAttendance() async {
-    AttendanceScraper attendanceScraper = AttendanceScraper();
-    Attendance attendance = await attendanceScraper.getCachedAttendance();
-    return attendance;
+    Attendance acheck = Attendance();
+    String userid = await AttendanceCache.getAttendanceCache();
+    CloudAttendance cloudAttendance = CloudAttendance(id: userid);
+    acheck = await cloudAttendance.getAttendanceData();
+    return acheck;
   }
   @override
   void initState() {
@@ -38,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
           builder: (context,snapshot) {
             if (snapshot.hasData && snapshot.connectionState==ConnectionState.done) {
               return snapshot.data.username!=null ? HazirHome(attendance: snapshot.data,) : LoginPage();
+
             }
             return Container(
               color: Colors.white,

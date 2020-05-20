@@ -42,7 +42,7 @@ class AttendanceScraper {
   Future<Attendance> allAttendanceData({bool saveCache}) async {
     var jsonDataAllCourses = await getJsonData();
     Attendance attendance = Attendance.fromJson(jsonDataAllCourses);
-    attendance.lastupdated = DateTime.now().toString();
+
     String jsonStringAllCourses = jsonEncode(attendance.toJson());
     if (saveCache && jsonStringAllCourses != null) {
       AttendanceCache.saveAttendanceCache(jsonStringAllCourses);

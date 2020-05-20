@@ -1,33 +1,29 @@
 
+import 'package:Hazir/main.dart';
+import 'package:Hazir/models/attendance.dart';
+import 'package:Hazir/scripts/cloudattendance.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:Hazir/scripts/attendancescraper.dart';
-import 'main.dart';
-import 'models/attendance.dart';
-
 class LoadingScreen extends StatefulWidget {
-  String name='Habibi';
+  String name;
   String userId;
   String password;
-  LoadingScreen({this.userId,this.password});
+
+  LoadingScreen({this.userId,this.password,this.name});
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 class _LoadingScreenState extends State<LoadingScreen> {
-  double _opacity = 0;
   Future<void> fetchUserData() async {
-    AttendanceScraper scraper = AttendanceScraper(
-      userId:  widget.userId,
-      password: widget.password,
-    );
+
     try{
-      Attendance attendance = await scraper.allAttendanceData(saveCache: true);
-      if (attendance!=null){
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (BuildContext context) =>
-              HazirHome(attendance: attendance,)));
+      CloudAttendance cloudAttendance = CloudAttendance(id: widget.userId,pass: widget.password);
+      if(await cloudAttendance.saveUserDataToCloud()){
+        Attendance attendance = await cloudAttendance.getAttendanceData();
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => HazirHome(attendance: attendance,)));
       }
     }catch(e){
       //TODO: Implement toast and navigation on fail.

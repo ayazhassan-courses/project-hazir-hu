@@ -10,19 +10,20 @@ class BackgroundAttendanceScraper extends AttendanceScraper{
   Attendance oldAttendance;
   Attendance newAttendance;
   updateData() async {
-      oldAttendance = await getCachedAttendance();
-      newAttendance = await allAttendanceData(saveCache: false);
-      if (newAttendance!=null && oldAttendance.username!=null){
-        //actions that take place if the attendance in the background fetch is not null
-        NotificationProvider notificationProvider = NotificationProvider();
-        notificationProvider.intializeNotification();
-        _compareData();
-        for (var notification in notifications){
-          notificationProvider.generateNotification(notification);
-          //Future.delayed(const Duration(seconds: 5));
-        }
-
+    oldAttendance = await getCachedAttendance();
+    if(oldAttendance.username!=null){
+    newAttendance = await allAttendanceData(saveCache: false);
+    if (newAttendance != null && oldAttendance.username != null) {
+      //actions that take place if the attendance in the background fetch is not null
+      NotificationProvider notificationProvider = NotificationProvider();
+      notificationProvider.intializeNotification();
+      _compareData();
+      for (var notification in notifications) {
+        notificationProvider.generateNotification(notification);
+        //Future.delayed(const Duration(seconds: 5));
       }
+    }
+  }
 
     }
   void _compareData(){

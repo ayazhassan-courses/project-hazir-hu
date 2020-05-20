@@ -1,3 +1,6 @@
+
+import 'package:firebase_database/firebase_database.dart';
+
 import 'attendance-single-day.dart';
 
 class Coursedata {
@@ -40,6 +43,25 @@ class Coursedata {
     coursesection = json['coursesection'];
     presentclasses = json['presentclasses'];
     totalclasses = json['totalclasses'];
+  }
+
+
+  Coursedata.fromDataSnapshot(dynamic snapshot) {
+    absentclasses = snapshot['absentclasses'];
+    attendancepercentage = double.parse(snapshot['attendancepercentage'].toString());
+    if (snapshot['attendances'] != null) {
+      attendances = new List<AttendanceSingleDay>();
+      snapshot['attendances'].forEach((v) {
+        attendances.add(new AttendanceSingleDay.fromDataSnapshot(v));
+      });
+    }
+    classcode = snapshot['classcode'];
+    coursecode = snapshot['coursecode'];
+    coursecomponent = snapshot['coursecomponent'];
+    coursename = snapshot['coursename'];
+    coursesection = snapshot['coursesection'];
+    presentclasses = snapshot['presentclasses'];
+    totalclasses = snapshot['totalclasses'];
   }
 
   Map<String, dynamic> toJson() {

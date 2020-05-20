@@ -1,3 +1,5 @@
+import 'package:firebase_database/firebase_database.dart';
+
 class AttendanceSingleDay {
   String date;
   String status;
@@ -7,6 +9,12 @@ class AttendanceSingleDay {
   AttendanceSingleDay.fromJson(Map<String, dynamic> json) {
     date = json['Date'];
     status = json['Status'];
+  }
+
+
+  AttendanceSingleDay.fromDataSnapshot(dynamic snapshot) {
+    date = snapshot['Date'];
+    status = snapshot['Status'];
   }
 
   Map<String, dynamic> toJson() {

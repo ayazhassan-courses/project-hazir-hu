@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "447166639057",
+    "firebase_url": "https://hazir-9a2c2.firebaseio.com",
+    "project_id": "hazir-9a2c2",
+    "storage_bucket": "hazir-9a2c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447166639057:android:887fd0b7c00aefc9b70ef0",
+        "android_client_info": {
+          "package_name": "exam.com.hazir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "447166639057-c6oano2lrah1gpji4h9gotogqtu7jj7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAszW6LauGCf6C7haekA53KxRX9gAGZqxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "447166639057-c6oano2lrah1gpji4h9gotogqtu7jj7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

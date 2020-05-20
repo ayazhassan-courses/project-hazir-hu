@@ -36,6 +36,8 @@ dependencies:
   flutter_calendar_carousel: ^1.4.11
   flutter_local_notifications: ^1.4.1
   workmanager: ^0.2.0
+  firebase_database: ^3.1.5
+  cloud_firestore: ^0.13.5
 
 
 
