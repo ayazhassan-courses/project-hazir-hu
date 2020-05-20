@@ -106,7 +106,7 @@ class _HazirHomeState extends State<HazirHome> {
                                 color: Colors.white,
                                 fontSize: divheight * 0.0203)),
                         Text(
-                            '${widget.attendance.last_updated}',
+                            '${DateFormat.yMd().add_jm().format(DateTime.fromMillisecondsSinceEpoch((widget.attendance.last_updated*1000).toInt()))}',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: divheight * 0.0203)),
