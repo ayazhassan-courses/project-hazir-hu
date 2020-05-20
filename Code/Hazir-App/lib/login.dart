@@ -1,8 +1,8 @@
 import 'package:Hazir/models/attendance.dart';
+import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:Hazir/scripts/attendancescraper.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'loadingscreen.dart';
 import 'main.dart';
@@ -17,6 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String username;
   String passwordText;
+  String token;
   bool _showProgress = false;
   @override
   Widget build(BuildContext context) {
@@ -99,10 +100,11 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () async {
+          CloudAttendance cloudAttendance = CloudAttendance(id: username,pass: passwordText,token: token);
+
           setState(() {
             _showProgress = !_showProgress;
           });
-          CloudAttendance cloudAttendance = CloudAttendance(id: 'ar06194',pass: '35442326google123\$A',token: 'demo');
 
           var response;
           try{
@@ -120,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
           }else{
             String status = response['status'];
             if(status=='user already exists'){
-              CloudAttendance cloudAttendance = CloudAttendance(id: 'ar06194',pass: '35442326google123\$A',token: 'demo');
+              AttendanceCache.saveAttendanceCache(username);
               Attendance attendance = await cloudAttendance.getAttendanceData();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HazirHome(attendance: attendance,)));

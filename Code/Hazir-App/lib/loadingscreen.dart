@@ -17,7 +17,6 @@ class LoadingScreen extends StatefulWidget {
 }
 class _LoadingScreenState extends State<LoadingScreen> {
   Future<void> fetchUserData() async {
-
     try{
       CloudAttendance cloudAttendance = CloudAttendance(id: widget.userId,pass: widget.password);
       if(await cloudAttendance.saveUserDataToCloud()){

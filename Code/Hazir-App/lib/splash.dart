@@ -16,8 +16,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<Attendance> getAttendance() async {
     Attendance acheck = Attendance();
     String userid = await AttendanceCache.getAttendanceCache();
-    CloudAttendance cloudAttendance = CloudAttendance(id: userid);
-    acheck = await cloudAttendance.getAttendanceData();
+    print(userid);
+    if(userid!=null){
+      CloudAttendance cloudAttendance = CloudAttendance(id: userid);
+      acheck = await cloudAttendance.getAttendanceData();
+    }
     return acheck;
   }
   @override

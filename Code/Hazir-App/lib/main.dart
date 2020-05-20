@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:Hazir/scripts/background_attendance_scrapper.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'coursepage.dart';
-import 'login.dart';
 import 'models/attendance.dart';
 const myTask = "syncWithTheBackEnd";
 

@@ -66,8 +66,6 @@ class CloudAttendance {
 
         });
 
-    print(databasekey);
-
     final FirebaseDatabase _database = FirebaseDatabase.instance;
     _database.setPersistenceEnabled(true);
     _database.setPersistenceCacheSizeBytes(25000);
