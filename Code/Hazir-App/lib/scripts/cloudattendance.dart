@@ -30,6 +30,7 @@ class CloudAttendance {
   Future<Map<String, dynamic>> login() async {
     String url =
         'https://us-central1-hazir-9a2c2.cloudfunctions.net/login?huid=$id&pass=$pass&token=$token';
+    print(url);
     Map<String,dynamic> JSONresponse = await _getJSONData(url);
     String status = JSONresponse['status'];
     if (status == 'user added' || status == 'user already exists') {
@@ -40,9 +41,10 @@ class CloudAttendance {
 
   }
 
-  Future<bool> saveUserDataToCloud() async {
+  Future<bool> updateUserDataOnCloud() async {
     String url =
         'https://us-central1-hazir-9a2c2.cloudfunctions.net/getData?huid=$id&pass=$pass';
+    print(url);
     Map<String,dynamic> JSONresponse = await _getJSONData(url);
     String status = JSONresponse['status'];
     if (status == 'data updated') {
@@ -56,24 +58,13 @@ class CloudAttendance {
 
   Future<Attendance> getAttendanceData() async {
     Attendance attendance;
-    final Firestore _db = Firestore.instance;
-    String databasekey = await _db
-        .collection('users')
-        .where('huid',isEqualTo: id)
-        .getDocuments()
-        .then((value) {
-          return value.documents[0]['key'];
-
-        });
-
     final FirebaseDatabase _database = FirebaseDatabase.instance;
-    _database.setPersistenceEnabled(true);
-    _database.setPersistenceCacheSizeBytes(25000);
     DatabaseReference _ref = _database
         .reference()
         .child("users")
-        .child(databasekey);
-    DataSnapshot snapshot = await _ref.once().then((snapshot) {
+        .child(id);
+    _ref.keepSynced(true);
+    await _ref.once().then((snapshot) {
       attendance = Attendance.fromDataSnapshot(snapshot);
       return;
     },onError: (e){

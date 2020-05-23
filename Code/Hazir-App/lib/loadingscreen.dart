@@ -19,7 +19,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Future<void> fetchUserData() async {
     try{
       CloudAttendance cloudAttendance = CloudAttendance(id: widget.userId,pass: widget.password);
-      if(await cloudAttendance.saveUserDataToCloud()){
+      if(await cloudAttendance.updateUserDataOnCloud()){
         Attendance attendance = await cloudAttendance.getAttendanceData();
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => HazirHome(attendance: attendance,)));

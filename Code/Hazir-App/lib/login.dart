@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
             print(e);
             //TODO: Implement error handling
           }
-          print(response);
+          print('The login response' +response['status']);
           if(response==null){
             setState(() {
               _showProgress = !_showProgress;
@@ -122,8 +122,8 @@ class _LoginPageState extends State<LoginPage> {
           }else{
             String status = response['status'];
             if(status=='user already exists'){
-              AttendanceCache.saveAttendanceCache(username);
               Attendance attendance = await cloudAttendance.getAttendanceData();
+              AttendanceCache.saveAttendanceCache(username);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HazirHome(attendance: attendance,)));
             }else if(status=='user added'){

@@ -1,13 +1,17 @@
 
+import 'package:Hazir/scripts/cloudattendance.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 import 'attendance-single-course.dart';
 
-class Attendance {
+class Attendance extends ChangeNotifier{
   List<Coursedata> coursedata;
   String id;
   String username;
   double last_updated;
+  String password;
   Attendance({this.coursedata, this.id, this.username});
 
   Attendance.fromJson(Map<String, dynamic> json) {
@@ -44,4 +48,33 @@ class Attendance {
     data['lastupdated'] = this.last_updated;
     return data;
   }
+
+  Future<Null> refreshData() async {
+    //This part gets the user password from cloud firestore
+
+    if(password==null){
+      await Firestore.instance.collection('users').document(id).get().then((value) => password=value['pass']).catchError((e){
+        //Todo error handling
+        //most probably network error would be here
+        print('Firestore update error');
+        print(e);
+      });
+    }
+
+    CloudAttendance cloudAttendance = CloudAttendance(id: id,pass: password);
+    try{
+      await cloudAttendance.updateUserDataOnCloud();
+    }catch(e){
+      //errors while updating user data
+      print(e);
+    }
+    Attendance newAttendance = await cloudAttendance.getAttendanceData();
+    last_updated = newAttendance.last_updated;
+    coursedata = newAttendance.coursedata;
+    notifyListeners();
+
+  }
+
+
+
 }
