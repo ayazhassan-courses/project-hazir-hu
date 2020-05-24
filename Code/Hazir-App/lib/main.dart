@@ -136,7 +136,13 @@ class Homepage extends StatelessWidget {
                   controller: _refreshController,
                   header: WaterDropMaterialHeader(),
                   onRefresh: () async {
-                    await changeAttendanceprovider.refreshData();
+                    try{
+                      await changeAttendanceprovider.refreshData();
+                    }catch(e){
+                      print(e);
+                      _refreshController.refreshCompleted();
+                    }
+                    print('refresh done');
                     _refreshController.refreshCompleted();
                   },
                   child: GridView.builder(

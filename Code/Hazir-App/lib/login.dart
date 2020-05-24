@@ -2,6 +2,7 @@ import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'loadingscreen.dart';
@@ -19,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   String passwordText;
   String token;
   bool _showProgress = false;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   @override
   Widget build(BuildContext context) {
     final logo = SizedBox(
@@ -100,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () async {
+          token = await _firebaseMessaging.getToken();
           CloudAttendance cloudAttendance = CloudAttendance(id: username,pass: passwordText,token: token);
 
           setState(() {
@@ -108,12 +111,12 @@ class _LoginPageState extends State<LoginPage> {
 
           var response;
           try{
+
              response = await cloudAttendance.login();
           }catch(e){
             print(e);
             //TODO: Implement error handling
           }
-          print('The login response' +response['status']);
           if(response==null){
             setState(() {
               _showProgress = !_showProgress;
@@ -122,8 +125,14 @@ class _LoginPageState extends State<LoginPage> {
           }else{
             String status = response['status'];
             if(status=='user already exists'){
-              Attendance attendance = await cloudAttendance.getAttendanceData();
-              AttendanceCache.saveAttendanceCache(username);
+              Attendance attendance;
+              try{
+                Attendance attendance = await cloudAttendance.getAttendanceData();
+              }catch(e){
+                //TODO: error handling
+                print(e);
+              }
+              await AttendanceCache.saveAttendanceCache(username);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HazirHome(attendance: attendance,)));
             }else if(status=='user added'){

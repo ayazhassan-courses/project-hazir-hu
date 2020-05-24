@@ -1,3 +1,4 @@
+import 'package:Hazir/loadingscreen.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,15 @@ class _SplashScreenState extends State<SplashScreen> {
     String userid = await AttendanceCache.getAttendanceCache();
     print(userid);
     if(userid!=null){
-      CloudAttendance cloudAttendance = CloudAttendance(id: userid);
-      acheck = await cloudAttendance.getAttendanceData();
+      try{
+        CloudAttendance cloudAttendance = CloudAttendance(id: userid);
+        acheck = await cloudAttendance.getAttendanceData();
+      }catch(e){
+        print('Can\'t find user on database');
+        AttendanceCache.removeAttendanceCache();
+        return acheck;
+      }
+
     }
     return acheck;
   }
@@ -43,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
           future: getAttendance(),
           builder: (context,snapshot) {
             if (snapshot.hasData && snapshot.connectionState==ConnectionState.done) {
-              return snapshot.data.username!=null ? HazirHome(attendance: snapshot.data,) : LoginPage();
+              return snapshot.data.username!=null ?  HazirHome(attendance: snapshot.data,) : LoginPage();
 
             }
             return Container(

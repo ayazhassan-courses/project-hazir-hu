@@ -1,4 +1,4 @@
-
+import 'package:Hazir/login.dart';
 import 'package:Hazir/main.dart';
 import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
@@ -18,8 +18,12 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen> {
   Future<void> fetchUserData() async {
     try{
+
       CloudAttendance cloudAttendance = CloudAttendance(id: widget.userId,pass: widget.password);
       if(await cloudAttendance.updateUserDataOnCloud()){
+        await Future.delayed(const Duration(seconds: 5), () {
+          print('5 second delay done');
+        });
         Attendance attendance = await cloudAttendance.getAttendanceData();
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => HazirHome(attendance: attendance,)));
@@ -27,13 +31,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }catch(e){
       //TODO: Implement toast and navigation on fail.
       print('Exception $e');
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (BuildContext context) => LoginPage()));
+
     }
   }
-  
+
   void initState() {
     super.initState();
     fetchUserData().whenComplete(
-        (){
+            (){
           print('done');
         }
     );
@@ -45,30 +52,30 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return Scaffold(
       body:Container(
 
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-               Container(
-                 height: _height*0.45,
-                   child: FlareActor("assets/animation.flr", alignment:Alignment.center, fit:BoxFit.fitHeight, animation:"coding")),
-                SizedBox(height: 60,),
-                Text('Hello,',style: TextStyle(fontSize: 37,fontWeight: FontWeight.normal),),
-                Text(widget.name.split(' ').last,style: TextStyle(fontSize: 47,fontWeight: FontWeight.bold),),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  height: _height*0.45,
+                  child: FlareActor("assets/animation.flr", alignment:Alignment.center, fit:BoxFit.fitHeight, animation:"coding")),
+              SizedBox(height: 60,),
+              Text('Hello,',style: TextStyle(fontSize: 37,fontWeight: FontWeight.normal),),
+              Text(widget.name.split(' ').last,style: TextStyle(fontSize: 47,fontWeight: FontWeight.bold),),
 
 
-                Text('We are collecting your data from Habib\'s server please be patient. This step is only for the first time.',style: TextStyle(fontSize: 16,fontWeight: FontWeight.normal,color: Colors.black38),),
-                Spacer(),
-                Center(child:CircularProgressIndicator()),
-              ],
-            ),
+              Text('We are collecting your data from Habib\'s server please be patient. This step is only for the first time.',style: TextStyle(fontSize: 16,fontWeight: FontWeight.normal,color: Colors.black38),),
+              Spacer(),
+              Center(child:CircularProgressIndicator()),
+            ],
           ),
-
         ),
-    
+
+      ),
+
     );
   }
 }

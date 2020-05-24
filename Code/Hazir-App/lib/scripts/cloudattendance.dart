@@ -10,6 +10,7 @@ class CloudAttendance {
   String pass;
   String token;
 
+
   CloudAttendance({this.id, this.pass, this.token});
 
   Future<Map<String, dynamic>> _getJSONData(url) async {
