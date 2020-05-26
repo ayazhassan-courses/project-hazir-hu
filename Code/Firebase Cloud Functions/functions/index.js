@@ -10,32 +10,93 @@ admin.initializeApp();
 let db = admin.firestore();
 
 
-// this function will be used to get new user data, it returns json response
-// if user's data has been added to database : { status : "data updated"  }
-// if invalid credentials : { status : 'invalid credentials' }
+exports.pulltoRefresh = functions.https.onRequest(async(request, response) => {
+
+    const huid = request.query.huid;
+    const pass = request.query.pass;
+    const url = `https://hazirapi.herokuapp.com/login?id=${huid}&pwd=${pass}`
+    const loginCheckUrl = `https://hazirapi.herokuapp.com/logincheck?id=${huid}&pwd=${pass}`
+    let loginCheck = false;
+    let token = ''
+    let userName = ''
+
+    await fetch(loginCheckUrl)
+        .then(apiData => apiData.json())
+        .then(apiData => {
+            if (apiData.status == 'success') {
+                loginCheck = true
+                userName = apiData.name
+            } else if (apiData.status == 'invalid credentials') {
+                response.send({
+                    status: 'invalid credentials'
+                })
+            }
+        });
+
+    if (loginCheck == true) {
+        try {
+            fetch(url)
+                .then(apiData => apiData.json())
+                .then(apiData => {
+                    var newUserReq = admin.database().ref('/users')
+                    newUserReq.child(userdata.huid).set(apiData)
+                    db.collection('users').doc(huid).update({ lastupdated: apiData.last_updated })
+                    let userToken = db.collection('users').doc(huid).get()
+                        .then(doc => {
+                            admin.database().ref(`/users/${huid}`).update({ token: doc.data().token, password: doc.data().pass });
+                            token = doc.data().token
+                        })
+                    response.send({
+                        status: 'data updated'
+                    })
+                    return
+                });
+        } catch (err) {
+            response.send({
+                status: 'invalid credentials'
+            })
+            return
+        }
+    } else {
+        var message = {
+            notification: {
+                title: 'Invalid Password',
+                body: `${userName} your password is outdated. Failed to reload`
+            },
+            data: {
+                id: huid,
+                name: Name,
+            },
+            token: token,
+        };
+        admin.messaging().send(message)
+            .then((res) => {
+                console.log('Notification sent successfully:', res)
+            })
+            .catch((err) => {
+                console.log('Notification sent failed:', err)
+            });
+    }
+
+})
+
 exports.getData = functions.https.onRequest(async(request, response) => {
 
     const huid = request.query.huid;
     const pass = request.query.pass;
     const url = `https://hazirapi.herokuapp.com/login?id=${huid}&pwd=${pass}`
-    let userKey = '';
-
-    let UserRef = db.collection('users');
-    let userDoc = await UserRef.get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                if (doc.id == huid) {
-                    userKey = doc.data().key
-                }
-            });
-        })
 
     try {
         fetch(url)
             .then(apiData => apiData.json())
             .then(apiData => {
-                admin.database().ref(`/users/${userKey}`).set(apiData);
+                var newUserReq = admin.database().ref('/users')
+                newUserReq.child(huid).set(apiData)
                 db.collection('users').doc(huid).update({ lastupdated: apiData.last_updated })
+                let userToken = db.collection('users').doc(huid).get()
+                    .then(doc => {
+                        admin.database().ref(`/users/${huid}`).update({ token: doc.data().token, password: doc.data().pass });
+                    })
                 response.send({
                     status: 'data updated'
                 })
@@ -47,20 +108,13 @@ exports.getData = functions.https.onRequest(async(request, response) => {
     }
 });
 
-
-// this is a login function
-// response: if user exists: { status : ''user already exists'' }
-// if user does not exists: {status : 'user added', name = 'user name' }
-// if new user fails login check : {status : 'invalid credentials' }
-// if network error : { status : 'network error }
-// if anyother error : { status: 'something is wrong'}
-
 exports.login = functions.https.onRequest(async(request, response) => {
 
     const huid = request.query.huid;
     const pass = request.query.pass;
     const token = request.query.token;
     let userExists = false;
+    let userName = '';
     const logincheckUrl = `https://hazirapi.herokuapp.com/logincheck?id=${huid}&pwd=${pass}`
     let loginCheck = false;
     const userdata = {
@@ -73,14 +127,14 @@ exports.login = functions.https.onRequest(async(request, response) => {
     let userDoc = await UserRef.get()
         .then(snapshot => {
             snapshot.forEach(doc => {
-                if (doc.id == userdata.huid) {
+                if (doc.id == userdata.huid && doc.pass == userdata.pass) {
                     userExists = true;
                 }
             });
         })
 
 
-    if (userExists === false) {
+    if (userExists == false) {
 
         try {
             await fetch(logincheckUrl)
@@ -88,7 +142,7 @@ exports.login = functions.https.onRequest(async(request, response) => {
                 .then(apiData => {
                     if (apiData.status == 'success') {
                         loginCheck = true
-                        let userName = apiData.name
+                        userName = apiData.name
                     } else if (apiData.status == 'invalid credentials') {
                         response.send({
                             status: 'invalid credentials'
@@ -102,17 +156,10 @@ exports.login = functions.https.onRequest(async(request, response) => {
         }
 
         if (loginCheck == true) {
-            var newUserReq = admin.database().ref('/users').push(userdata);
-            var userUniqueKey = newUserReq.key;
-            userdata['key'] = userUniqueKey
             db.collection('users').doc(userdata.huid).set(userdata)
             response.send({
                 status: 'user added',
                 name: userName
-            })
-        } else {
-            response.send({
-                status: 'something is wrong'
             })
         }
     } else {
@@ -123,20 +170,24 @@ exports.login = functions.https.onRequest(async(request, response) => {
 });
 
 // schedule function
-// this is not a callable function
-// this will update all the user's data that is outdated for more than 3 hours
-// error handling responses can be found in function logs.
-exports.scheduledFunction = functions.runWith(runtimeOpts).pubsub.schedule('every 20 minutes').onRun(async(context) => {
+exports.dataUpdateprocess = functions.runWith(runtimeOpts).pubsub.schedule('every 12 hours').onRun(async(context) => {
 
 
     let usertoUpdate = [];
     const currentTime = Date.now()
+    let userlastupdatedTime = null;
+    let huid = null;
+    let pass = null;
+    let token = null;
 
     let UserRef = db.collection('users');
     let userDoc = await UserRef.get()
         .then(snapshot => {
             snapshot.forEach(doc => {
-                if (usertoUpdate.length < 26) {
+                userlastupdatedTime = doc.data().lastupdated
+                const timeDifference = currentTime - userlastupdatedTime
+
+                if (usertoUpdate.length < 26 && timeDifference > 180) {
                     usertoUpdate.push(doc.data())
                 }
             });
@@ -146,75 +197,176 @@ exports.scheduledFunction = functions.runWith(runtimeOpts).pubsub.schedule('ever
 
     if (usertoUpdate.length > 0) {
         for (const eachUser of usertoUpdate) {
-            const userlastupdatedTime = eachUser.lastupdated
-            const timeDifference = currentTime - userlastupdatedTime
-            const huid = eachUser.huid
-            const pass = eachUser.pass
-            const userKey = eachUser.key
+
+            huid = eachUser.huid
+            pass = eachUser.pass
+            token = eachUser.token
+            let Name = null;
+            let userLoginCheck = false;
+
+            const loginCheckUrl = `https://hazirapi.herokuapp.com/logincheck?id=${huid}&pwd=${pass}`
             const url = `https://hazirapi.herokuapp.com/login?id=${huid}&pwd=${pass}`
 
-            if (timeDifference > 180) {
+            await fetch(loginCheckUrl)
+                .then(apiData => apiData.json())
+                .then(apiData => {
+                    if (apiData.status == 'success') {
+                        userLoginCheck = true
+                        Name = apiData.name
+                    }
+                });
+
+            if (userLoginCheck == false) {
                 try {
                     await fetch(url)
                         .then(apiData => apiData.json())
                         .then(apiData => {
-                            admin.database().ref(`/users/${userKey}`).set(apiData);
+                            admin.database().ref(`/users/${huid}`).set(apiData);
                             db.collection('users').doc(huid).update({ lastupdated: apiData.last_updated })
                             console.log(`Data updated for user: ${huid}`)
                         });
                 } catch (err) {
                     console.log(`Failed to update ${huid}`)
                 }
+            } else {
+                var message = {
+                    notification: {
+                        title: 'Invalid Password',
+                        body: `${Name} your password is outdated. Failed to update. `
+                    },
+                    data: {
+                        coursename: coursename,
+                        date: date,
+                    },
+                    token: token,
+                };
+                admin.messaging().send(message)
+                    .then((res) => {
+                        console.log('Notification sent successfully:', res)
+                    })
+                    .catch((err) => {
+                        console.log('Notification sent failed:', err)
+                    });
+            }
+
+        }
+    }
+});
+
+
+
+// exports.generateNotifications = functions.https.onRequest((request, response) => {
+//     //request parameters
+//     const userid = request.query.userid;
+//     const token = request.query.token;
+//     const type = request.query.type;
+//     const coursename = request.query.coursename;
+//     const date = request.query.date;
+
+//     if (type == 'absent') {
+//         var message = {
+//             notification: {
+//                 title: 'Absent Notification',
+//                 body: `You were absent on ${date} in ${coursename}.`
+//             },
+//             data: {
+//                 coursename: coursename,
+//                 date: date,
+//             },
+//             token: token,
+//         };
+
+//         db.collection('notifications').doc(userid).collection('notifications').doc().set(message);
+//         admin.messaging().send(message)
+//             .then((res) => {
+//                 response.send({
+//                     status: 'Message sent sucessfully',
+//                 })
+//             })
+//             .catch((error) => {
+//                 response.send({
+//                     status: 'Failed to send message',
+//                 });
+//             });
+//     }
+// });
+
+exports.makeUppercase = functions.database.ref(`/users/{updatingUser}`)
+    .onUpdate((change, context) => {
+
+
+        prevData = change.before.val() // JS object
+        updatedData = change.after.val() // JS object
+        const huid = updatedData.id
+        const token = updatedData.token
+        const oldDataKeys = Object.keys(prevData.coursedata) // list of keys
+        const newDataKeys = Object.keys(updatedData.coursedata) // list of keys
+        let date = '';
+        let courseName = '';
+        let formatedDate = '';
+
+        console.log('func is working')
+        for (eachCourse = 0; eachCourse < newDataKeys.length; eachCourse++) {
+
+            //  absent check and generate notification
+            if (prevData.coursedata[eachCourse].absentclasses < updatedData.coursedata[eachCourse].absentclasses) {
+                const insideCourse = updatedData.coursedata[eachCourse]
+                courseName = insideCourse.coursename
+                for (absentDate = 0; absentDate < insideCourse.attendances.length; absentDate++) {
+                    if (insideCourse.attendances[absentDate].Status == 'Absent') {
+                        date = insideCourse.attendances[absentDate].Date
+                        let formatDate = new Date(date)
+                        let mainDate = String(formatDate).split(' ').slice(0, 4)
+                        formatedDate = ''.concat(mainDate[0], ' ', mainDate[1], ' ', mainDate[2], ' ', mainDate[3])
+                    }
+                }
+                var message = {
+                    notification: {
+                        title: 'Absent Notification',
+                        body: `You were absent on ${formatedDate} in ${courseName}.`
+                    },
+                    data: {
+                        coursename: courseName,
+                        date: date,
+                    },
+                    token: token,
+                }
+            }
+
+            // present check and generate notification
+            if (prevData.coursedata[eachCourse].presentclasses < updatedData.coursedata[eachCourse].presentclasses) {
+                const insideCourse = updatedData.coursedata[eachCourse]
+                courseName = insideCourse.coursename
+                for (presentDate = 0; presentDate < insideCourse.attendances.length; presentDate++) {
+                    if (insideCourse.attendances[presentDate].Status == 'Present') {
+                        date = insideCourse.attendances[presentDate].Date
+                        let formatDate = new Date(date)
+                        let mainDate = String(formatDate).split(' ').slice(0, 4)
+                        formatedDate = ''.concat(mainDate[0], ' ', mainDate[1], ' ', mainDate[2], ' ', mainDate[3])
+                    }
+                }
+                var message = {
+                    notification: {
+                        title: 'Present Notification',
+                        body: `You were present on ${formatedDate} in ${courseName}`
+                    },
+                    data: {
+                        coursename: courseName,
+                        date: date,
+                    },
+                    token: token,
+                }
             }
         }
 
-    } else {
-        console.log('All users are upto date')
-    }
-
-
-});
-
-exports.generateNotifications = functions.https.onRequest((request, response) => {
-    //request parameters
-    const userid = request.query.userid;
-    const token = request.query.token;
-    const type = request.query.type;
-    const coursename = request.query.coursename;
-    const date = request.query.date;
-
-    if (type == 'absent') {
-        var message = {
-            notification: {
-                title: 'Absent Notification',
-                body: `You were absent on ${date} in ${coursename}.`
-            },
-            data: {
-                coursename: coursename,
-                date: date,
-            },
-            token: token,
-        };
-
-        db.collection('notifications').doc(userid).collection('notifications').doc().set(message);
-
-
+        console.log(message)
 
         admin.messaging().send(message)
             .then((res) => {
-
-                response.send({
-                    status: 'Message sent sucessfully',
-                })
+                console.log('Notification sent successfully:', res)
             })
-            .catch((error) => {
-                response.send({
-                    status: 'Failed to send message',
-                });
-
+            .catch((err) => {
+                console.log('Notification sent failed:', err)
             });
-
-    }
-
-
-});
+        return null
+    });
