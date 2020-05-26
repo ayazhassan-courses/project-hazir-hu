@@ -1,1 +1,3 @@
-# General Project and/or Assignment
+# Hazir
+### HU Attendance App
+Hazir is a mobile app built on TODO
