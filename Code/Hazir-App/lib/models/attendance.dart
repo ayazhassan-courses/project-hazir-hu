@@ -1,4 +1,5 @@
 
+import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,6 +11,7 @@ class Attendance extends ChangeNotifier{
   String id;
   String username;
   double last_updated;
+  bool isDataLoading=true;
   String password;
   Attendance({this.coursedata, this.id, this.username});
 
@@ -72,6 +74,22 @@ class Attendance extends ChangeNotifier{
     coursedata = newAttendance.coursedata;
     notifyListeners();
 
+  }
+
+  Future<Null> getAttendanceData(String username,String userid) async {
+    CloudAttendance cloudAttendance = CloudAttendance(id: userid,pass: password);
+    Attendance newAttendance = await cloudAttendance.getAttendanceData();
+    last_updated = newAttendance.last_updated;
+    coursedata = newAttendance.coursedata;
+    id = newAttendance.id;
+    username = newAttendance.username;
+    last_updated=newAttendance.last_updated;
+    password=newAttendance.password;
+    if(username==null){
+      await AttendanceCache.saveNameCache(newAttendance.username);
+    }
+    isDataLoading=false;
+    notifyListeners();
   }
 
 

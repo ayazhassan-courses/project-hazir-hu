@@ -132,9 +132,9 @@ class _LoginPageState extends State<LoginPage> {
                 //TODO: error handling
                 print(e);
               }
-              await AttendanceCache.saveAttendanceCache(username);
+              await AttendanceCache.saveIdCache(username);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => HazirHome(attendance: attendance,)));
+                  builder: (BuildContext context) => HazirHome(cachedId: username,)));
             }else if(status=='user added'){
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => LoadingScreen(

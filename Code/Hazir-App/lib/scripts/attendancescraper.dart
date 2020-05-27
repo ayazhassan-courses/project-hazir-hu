@@ -45,7 +45,7 @@ class AttendanceScraper {
 
     String jsonStringAllCourses = jsonEncode(attendance.toJson());
     if (saveCache && jsonStringAllCourses != null) {
-      AttendanceCache.saveAttendanceCache(jsonStringAllCourses);
+      AttendanceCache.saveIdCache(jsonStringAllCourses);
     }
     return attendance;
   }
@@ -53,7 +53,7 @@ class AttendanceScraper {
   //else it returns an empty instance of attendance
    Future<Attendance> getCachedAttendance() async {
     Attendance attendance = Attendance();
-    String attendanceCache = await AttendanceCache.getAttendanceCache();
+    String attendanceCache = await AttendanceCache.getIdCache();
     if (attendanceCache != null) {
       var jsonDataAllCourses = jsonDecode(attendanceCache);
       attendance = Attendance.fromJson(jsonDataAllCourses);

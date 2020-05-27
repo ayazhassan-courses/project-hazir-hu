@@ -14,22 +14,11 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   
-  Future<Attendance> getAttendance() async {
-    Attendance acheck = Attendance();
-    String userid = await AttendanceCache.getAttendanceCache();
-    print(userid);
-    if(userid!=null){
-      try{
-        CloudAttendance cloudAttendance = CloudAttendance(id: userid);
-        acheck = await cloudAttendance.getAttendanceData();
-      }catch(e){
-        print('Can\'t find user on database');
-        AttendanceCache.removeAttendanceCache();
-        return acheck;
-      }
-
-    }
-    return acheck;
+  Future<Map<String,dynamic>> getAttendance() async {
+    Map<String,dynamic> data = {};
+    data['name'] = await AttendanceCache.getNameCache();
+    data['id'] = await AttendanceCache.getIdCache();
+    return data;
   }
   @override
   void initState() {
@@ -51,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
           future: getAttendance(),
           builder: (context,snapshot) {
             if (snapshot.hasData && snapshot.connectionState==ConnectionState.done) {
-              return snapshot.data.username!=null ?  HazirHome(attendance: snapshot.data,) : LoginPage();
+              return snapshot.data['id']!=null ?  HazirHome(cachedId: snapshot.data['id'],cachedName: snapshot.data['name'],) : LoginPage();
 
             }
             return Container(

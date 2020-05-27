@@ -49,7 +49,7 @@ class CloudAttendance {
     Map<String,dynamic> JSONresponse = await _getJSONData(url);
     String status = JSONresponse['status'];
     if (status == 'data updated') {
-      await AttendanceCache.saveAttendanceCache(id);
+      await AttendanceCache.saveIdCache(id);
       return true;
     } else {
       throw (status);
@@ -60,6 +60,7 @@ class CloudAttendance {
   Future<Attendance> getAttendanceData() async {
     Attendance attendance;
     final FirebaseDatabase _database = FirebaseDatabase.instance;
+    _database.setPersistenceEnabled(true);
     DatabaseReference _ref = _database
         .reference()
         .child("users")

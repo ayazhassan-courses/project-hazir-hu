@@ -1,6 +1,7 @@
 import 'package:Hazir/login.dart';
 import 'package:Hazir/main.dart';
 import 'package:Hazir/models/attendance.dart';
+import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -18,15 +19,14 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen> {
   Future<void> fetchUserData() async {
     try{
-
+      AttendanceCache.saveNameCache(widget.name);
       CloudAttendance cloudAttendance = CloudAttendance(id: widget.userId,pass: widget.password);
       if(await cloudAttendance.updateUserDataOnCloud()){
         await Future.delayed(const Duration(seconds: 5), () {
           print('5 second delay done');
         });
-        Attendance attendance = await cloudAttendance.getAttendanceData();
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => HazirHome(attendance: attendance,)));
+            builder: (BuildContext context) => HazirHome(cachedId: widget.userId,cachedName: widget.name,)));
       }
     }catch(e){
       //TODO: Implement toast and navigation on fail.
