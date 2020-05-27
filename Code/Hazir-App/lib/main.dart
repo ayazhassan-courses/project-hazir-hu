@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:Hazir/settings.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,17 @@ class Homepage extends StatelessWidget {
         RefreshController(initialRefresh: false);
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          foregroundColor: Colors.white,
+          backgroundColor: Theme.of(context).primaryColor,
+          onPressed: () {
+            Navigator.push(
+                context,
+                 MaterialPageRoute(
+                    builder: (BuildContext context) => Settings(name:changeAttendanceprovider.username==null ? 'Habibi' : changeAttendanceprovider.username,id : userid)));
+          },
+          child: Icon(Icons.settings),
+        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
