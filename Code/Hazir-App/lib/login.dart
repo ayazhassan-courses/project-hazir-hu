@@ -1,3 +1,4 @@
+import 'package:Hazir/features.dart';
 import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
@@ -115,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
              response = await cloudAttendance.login();
           }catch(e){
             print(e);
-            //TODO: Implement error handling
+            Features.generateLongToast(e);
           }
           if(response==null){
             setState(() {
@@ -129,8 +130,7 @@ class _LoginPageState extends State<LoginPage> {
               try{
                 Attendance attendance = await cloudAttendance.getAttendanceData();
               }catch(e){
-                //TODO: error handling
-                print(e);
+                Features.generateLongToast(e);
               }
               await AttendanceCache.saveIdCache(username);
               Navigator.of(context).pushReplacement(MaterialPageRoute(

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 import 'coursepage.dart';
+import 'features.dart';
 import 'models/attendance.dart';
 
 void main() async {
@@ -170,10 +171,10 @@ class Homepage extends StatelessWidget {
                     try {
                       await changeAttendanceprovider.refreshData();
                     } catch (e) {
-                      print(e);
+                      Features.generateLongToast(e);
                       _refreshController.refreshCompleted();
                     }
-                    print('refresh done');
+                    Features.generateLongToast('Refreshed Sucessfully');
                     _refreshController.refreshCompleted();
                   },
                   child: GridView.builder(

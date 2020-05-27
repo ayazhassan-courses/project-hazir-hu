@@ -74,12 +74,12 @@ class CloudAttendance {
 
    deleteAllDataOnCloudAndDevice() async {
     try {
-      await FirebaseDatabase.instance
+      FirebaseDatabase.instance
           .reference()
           .child("users")
           .child(id)
           .remove();
-      await Firestore.instance.collection('users').document(id).delete();
+      Firestore.instance.collection('users').document(id).delete();
       await deleteAllDataOnDevice();
     } catch (e) {
       throw (e);

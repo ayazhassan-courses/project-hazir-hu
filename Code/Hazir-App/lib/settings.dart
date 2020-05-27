@@ -4,6 +4,7 @@ import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'colors.dart';
 import 'login.dart';
@@ -186,23 +187,40 @@ class _SettingsState extends State<Settings> {
                               style: TextStyle(color: Colors.red),
                             ),
                             onTap: () async {
-                              setState(() {
-                                _showProgress = true;
-                              });
-                              try {
-                                await cloudAttendance
-                                    .deleteAllDataOnCloudAndDevice();
+                              Alert(
+                                context: context,
+                                type: AlertType.error,
+                                title: "ALERT",
+                                desc: "Are you sure you want to delete data from the cloud?",
+                                buttons: [
+                                  DialogButton(
+                                    child: Text(
+                                      "YES",
+                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        _showProgress = true;
+                                      });
+                                      try {
+                                        await cloudAttendance
+                                            .deleteAllDataOnCloudAndDevice();
+                                        Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                                builder: (BuildContext context) =>
+                                                    LoginPage()));
+                                      } catch (e) {
+                                        setState(() {
+                                          _showProgress = false;
+                                        });
+                                        Features.generateLongToast(e.toString());
+                                      }
+                                    },
+                                    width: 120,
+                                  )
+                                ],
+                              ).show();
 
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            LoginPage()));
-                              } catch (e) {
-                                setState(() {
-                                  _showProgress = false;
-                                });
-                                Features.generateLongToast(e.toString());
-                              }
                             },
                           ),
                         ],
