@@ -31,6 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'Poppins',
         primaryColor: Color(0xFF5C2B62),
         accentColor: Color(0xFFD4C194),
         primaryTextTheme: TextTheme(title: TextStyle(color: Colors.white)),

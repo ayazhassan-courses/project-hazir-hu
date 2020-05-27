@@ -76,7 +76,7 @@ class Attendance extends ChangeNotifier{
 
   }
 
-  Future<Null> getAttendanceData(String username,String userid) async {
+  Future<Null> getAttendanceData(String user,String userid) async {
     CloudAttendance cloudAttendance = CloudAttendance(id: userid,pass: password);
     Attendance newAttendance = await cloudAttendance.getAttendanceData();
     last_updated = newAttendance.last_updated;
@@ -85,7 +85,7 @@ class Attendance extends ChangeNotifier{
     username = newAttendance.username;
     last_updated=newAttendance.last_updated;
     password=newAttendance.password;
-    if(username==null){
+    if(user==null){
       await AttendanceCache.saveNameCache(newAttendance.username);
     }
     isDataLoading=false;

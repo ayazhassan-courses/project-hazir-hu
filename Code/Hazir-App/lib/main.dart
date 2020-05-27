@@ -100,7 +100,7 @@ class Homepage extends StatelessWidget {
                         Spacer(),
                         GestureDetector(
                           onTap: () async {
-                            changeAttendanceprovider.refreshData();
+                            print(changeAttendanceprovider.isDataLoading);
                           },
                           child: Icon(
                             Icons.notifications_none,
@@ -121,12 +121,15 @@ class Homepage extends StatelessWidget {
                         Text(
                           changeAttendanceprovider.username==null ? 'Habibi':'${changeAttendanceprovider.username}',
                           style: TextStyle(
+                            height: 1.2,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: divheight * 0.0438),
+                              fontSize: divheight * 0.0438
+                          ),
                         ),
                         Text('Last Updated',
                             style: TextStyle(
+                              height: 1.1,
                                 color: Colors.white,
                                 fontSize: divheight * 0.0203)),
                         Text(
@@ -148,7 +151,7 @@ class Homepage extends StatelessWidget {
                 height: divheight * 0.77,
                 width: double.infinity,
                 child: SmartRefresher(
-                  enablePullDown: changeAttendanceprovider.isDataLoading ? false : true,
+                  enablePullDown: true,
                   controller: _refreshController,
                   header: WaterDropMaterialHeader(),
                   onRefresh: () async {

@@ -160,12 +160,12 @@ class CourseDetailsWidget extends StatelessWidget {
       children: <Widget>[
         Text(
           title,
-          style: TextStyle(fontSize: 15, color: Colors.white),
+          style: TextStyle(height:1,fontSize: 12, color: Colors.white),
         ),
         Text(
           content.toUpperCase(),
           style: TextStyle(
-              fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
         )
       ],
     );

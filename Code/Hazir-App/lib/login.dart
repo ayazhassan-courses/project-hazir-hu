@@ -102,12 +102,12 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () async {
-          token = await _firebaseMessaging.getToken();
-          CloudAttendance cloudAttendance = CloudAttendance(id: username,pass: passwordText,token: token);
-
           setState(() {
             _showProgress = !_showProgress;
           });
+
+          token = await _firebaseMessaging.getToken();
+          CloudAttendance cloudAttendance = CloudAttendance(id: username,pass: passwordText,token: token);
 
           var response;
           try{
