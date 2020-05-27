@@ -107,7 +107,7 @@ class Homepage extends StatelessWidget {
                           'Hello,',
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: divheight * 0.0278),
+                              fontSize: divheight * 0.0218),
                         ),
                         Spacer(),
                         GestureDetector(
@@ -136,21 +136,21 @@ class Homepage extends StatelessWidget {
                             height: 1.2,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: divheight * 0.0438
+                              fontSize: divheight * 0.0418
                           ),
                         ),
                         Text('Last Updated',
                             style: TextStyle(
                               height: 1.1,
                                 color: Colors.white,
-                                fontSize: divheight * 0.0203)),
+                                fontSize: divheight * 0.0193)),
                         Text(
                             changeAttendanceprovider.isDataLoading
                                 ? 'MM/DD/YYYY 0:00'
                                 : '${DateFormat.yMd().add_jm().format(DateTime.fromMillisecondsSinceEpoch((changeAttendanceprovider.last_updated * 1000).toInt()))}',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: divheight * 0.0203)),
+                                fontSize: divheight * 0.0193)),
                       ],
                     ),
                   ),

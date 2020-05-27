@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +11,6 @@ class CloudAttendance {
   String id;
   String pass;
   String token;
-
 
   CloudAttendance({this.id, this.pass, this.token});
 
@@ -32,21 +33,20 @@ class CloudAttendance {
     String url =
         'https://us-central1-hazir-9a2c2.cloudfunctions.net/login?huid=$id&pass=$pass&token=$token';
     print(url);
-    Map<String,dynamic> JSONresponse = await _getJSONData(url);
+    Map<String, dynamic> JSONresponse = await _getJSONData(url);
     String status = JSONresponse['status'];
     if (status == 'user added' || status == 'user already exists') {
       return JSONresponse;
     } else {
       throw (status);
     }
-
   }
 
   Future<bool> updateUserDataOnCloud() async {
     String url =
         'https://us-central1-hazir-9a2c2.cloudfunctions.net/getData?huid=$id&pass=$pass';
     print(url);
-    Map<String,dynamic> JSONresponse = await _getJSONData(url);
+    Map<String, dynamic> JSONresponse = await _getJSONData(url);
     String status = JSONresponse['status'];
     if (status == 'data updated') {
       await AttendanceCache.saveIdCache(id);
@@ -54,29 +54,39 @@ class CloudAttendance {
     } else {
       throw (status);
     }
-
   }
 
   Future<Attendance> getAttendanceData() async {
     Attendance attendance;
     final FirebaseDatabase _database = FirebaseDatabase.instance;
     _database.setPersistenceEnabled(true);
-    DatabaseReference _ref = _database
-        .reference()
-        .child("users")
-        .child(id);
+    DatabaseReference _ref = _database.reference().child("users").child(id);
     _ref.keepSynced(true);
     await _ref.once().then((snapshot) {
       attendance = Attendance.fromDataSnapshot(snapshot);
       return;
-    },onError: (e){
-      throw(e);
+    }, onError: (e) {
+      throw (e);
     });
-   
-    return attendance;
 
+    return attendance;
   }
 
+   deleteAllDataOnCloudAndDevice() async {
+    try {
+      await FirebaseDatabase.instance
+          .reference()
+          .child("users")
+          .child(id)
+          .remove();
+      await Firestore.instance.collection('users').document(id).delete();
+      await deleteAllDataOnDevice();
+    } catch (e) {
+      throw (e);
+    }
+  }
 
-
+   deleteAllDataOnDevice() async {
+    AttendanceCache.removeAttendanceCache();
+  }
 }

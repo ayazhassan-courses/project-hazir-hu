@@ -1,3 +1,4 @@
+import 'package:Hazir/colors.dart';
 import 'package:Hazir/loadingscreen.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
@@ -32,8 +33,8 @@ class _SplashScreenState extends State<SplashScreen> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Poppins',
-        primaryColor: Color(0xFF5C2B62),
-        accentColor: Color(0xFFD4C194),
+        primaryColor: kPrimaryColor,
+        accentColor: kAccentColor,
         primaryTextTheme: TextTheme(title: TextStyle(color: Colors.white)),
         hintColor: Color(0xFFD4C194),
       ),
