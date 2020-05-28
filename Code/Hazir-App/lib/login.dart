@@ -7,13 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'colors.dart';
 import 'loadingscreen.dart';
 import 'main.dart';
 
 
 class LoginPage extends StatefulWidget {
-  static String tag = 'login-page';
   @override
   _LoginPageState createState() => new _LoginPageState();
 }
@@ -151,7 +152,12 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(color: Theme.of(context).primaryColor)),
       ),
     );
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: kPrimaryColor,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.black,
 
+    ));
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: ModalProgressHUD(

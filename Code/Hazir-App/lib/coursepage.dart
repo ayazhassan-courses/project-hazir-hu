@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'models/attendance-single-course.dart';
 import 'models/attendance-single-day.dart';
 class CoursePage extends StatefulWidget {
-  Coursedata coursedata;
-  CoursePage({this.coursedata});
+  final Coursedata coursedata;
+  final String highlightedDate;
+  CoursePage({@required this.coursedata,this.highlightedDate});
+
   @override
   _CoursePageState createState() => _CoursePageState();
 }
@@ -35,6 +37,7 @@ class _CoursePageState extends State<CoursePage> {
         in widget.coursedata.attendances) {
       rows.add(
         DataRow(
+          selected: attendance.date==widget.highlightedDate,
           cells: [
             DataCell(
               Text(formatDate(attendance.date)),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:Hazir/colors.dart';
+import 'package:Hazir/notifications.dart';
 import 'package:Hazir/settings.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,9 @@ import 'features.dart';
 import 'models/attendance.dart';
 
 void main() async {
+
   runApp(SplashScreen());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -33,9 +36,7 @@ class HazirHome extends StatelessWidget {
   Widget build(BuildContext context) {
     var divheight = MediaQuery.of(context).size.height;
     var divwidth = MediaQuery.of(context).size.width;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: kPrimaryColor, //or set color with: Color(0xFF0000FF)
-    ));
+
     return ChangeNotifierProvider(
         create: (context) {
          Attendance attendance =Attendance();
@@ -114,7 +115,11 @@ class Homepage extends StatelessWidget {
                         Spacer(),
                         GestureDetector(
                           onTap: () async {
-                            print(changeAttendanceprovider.isDataLoading);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) => ChangeNotifierProvider.value(
+                                  value: changeAttendanceprovider,
+                                  child: Notifications(),
+                                )));
                           },
                           child: Icon(
                             Icons.notifications_none,

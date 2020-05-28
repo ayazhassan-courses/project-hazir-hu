@@ -292,6 +292,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   onPressed: () async {
                     await AttendanceCache.removeAttendanceCache();
+                    Navigator.pop(context);
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (BuildContext context) => LoginPage()));
                   },
