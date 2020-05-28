@@ -42,6 +42,7 @@ dependencies:
   shimmer: ^1.1.1
   settings_ui: ^0.3.0
   rflutter_alert: ^1.0.3
+  data_connection_checker: ^0.3.4
 
 
 

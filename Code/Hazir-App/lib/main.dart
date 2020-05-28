@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:Hazir/colors.dart';
 import 'package:Hazir/settings.dart';
 import 'package:Hazir/splash.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,7 +34,7 @@ class HazirHome extends StatelessWidget {
     var divheight = MediaQuery.of(context).size.height;
     var divwidth = MediaQuery.of(context).size.width;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF5C2B62), //or set color with: Color(0xFF0000FF)
+      statusBarColor: kPrimaryColor, //or set color with: Color(0xFF0000FF)
     ));
     return ChangeNotifierProvider(
         create: (context) {

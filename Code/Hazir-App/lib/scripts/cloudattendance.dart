@@ -74,12 +74,15 @@ class CloudAttendance {
 
    deleteAllDataOnCloudAndDevice() async {
     try {
-      FirebaseDatabase.instance
-          .reference()
+      FirebaseDatabase _realtimedb = await FirebaseDatabase.instance;
+      await _realtimedb.setPersistenceEnabled(false);
+      await _realtimedb.reference()
           .child("users")
           .child(id)
           .remove();
-      Firestore.instance.collection('users').document(id).delete();
+      Firestore _firestrore = await Firestore.instance;
+      _firestrore.settings(persistenceEnabled: false);
+       await  _firestrore.collection('users').document(id).delete();
       await deleteAllDataOnDevice();
     } catch (e) {
       throw (e);

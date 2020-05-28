@@ -3,6 +3,8 @@ import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -106,6 +108,8 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _showProgress = !_showProgress;
           });
+          FirebaseDatabase.instance.purgeOutstandingWrites();
+
 
           token = await _firebaseMessaging.getToken();
           CloudAttendance cloudAttendance = CloudAttendance(id: username,pass: passwordText,token: token);
@@ -126,12 +130,6 @@ class _LoginPageState extends State<LoginPage> {
           }else{
             String status = response['status'];
             if(status=='user already exists'){
-              Attendance attendance;
-              try{
-                Attendance attendance = await cloudAttendance.getAttendanceData();
-              }catch(e){
-                Features.generateLongToast(e);
-              }
               await AttendanceCache.saveIdCache(username);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HazirHome(cachedId: username,)));
