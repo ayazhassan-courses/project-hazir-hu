@@ -10,76 +10,6 @@ admin.initializeApp();
 let db = admin.firestore();
 
 
-exports.pulltoRefresh = functions.https.onRequest(async(request, response) => {
-
-    const huid = request.query.huid;
-    const pass = request.query.pass;
-    const url = `https://hazirapi.herokuapp.com/login?id=${huid}&pwd=${pass}`
-    const loginCheckUrl = `https://hazirapi.herokuapp.com/logincheck?id=${huid}&pwd=${pass}`
-    let loginCheck = false;
-    let token = ''
-    let userName = ''
-
-    await fetch(loginCheckUrl)
-        .then(apiData => apiData.json())
-        .then(apiData => {
-            if (apiData.status == 'success') {
-                loginCheck = true
-                userName = apiData.name
-            } else if (apiData.status == 'invalid credentials') {
-                response.send({
-                    status: 'invalid credentials'
-                })
-            }
-        });
-
-    if (loginCheck == true) {
-        try {
-            fetch(url)
-                .then(apiData => apiData.json())
-                .then(apiData => {
-                    var newUserReq = admin.database().ref('/users')
-                    newUserReq.child(userdata.huid).set(apiData)
-                    db.collection('users').doc(huid).update({ lastupdated: apiData.last_updated })
-                    let userToken = db.collection('users').doc(huid).get()
-                        .then(doc => {
-                            admin.database().ref(`/users/${huid}`).update({ token: doc.data().token, password: doc.data().pass });
-                            token = doc.data().token
-                        })
-                    response.send({
-                        status: 'data updated'
-                    })
-                    return
-                });
-        } catch (err) {
-            response.send({
-                status: 'invalid credentials'
-            })
-            return
-        }
-    } else {
-        var message = {
-            notification: {
-                title: 'Invalid Password',
-                body: `${userName} your password is outdated. Failed to reload`
-            },
-            data: {
-                id: huid,
-                name: Name,
-            },
-            token: token,
-        };
-        admin.messaging().send(message)
-            .then((res) => {
-                console.log('Notification sent successfully:', res)
-            })
-            .catch((err) => {
-                console.log('Notification sent failed:', err)
-            });
-    }
-
-})
-
 exports.getData = functions.https.onRequest(async(request, response) => {
 
     const huid = request.query.huid;
@@ -92,7 +22,9 @@ exports.getData = functions.https.onRequest(async(request, response) => {
             .then(apiData => {
                 var newUserReq = admin.database().ref('/users')
                 newUserReq.child(huid).set(apiData)
-                db.collection('users').doc(huid).update({ lastupdated: apiData.last_updated })
+                var normalDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                normalDate.setUTCSeconds(apiData.last_updated);
+                db.collection('users').doc(huid).update({ lastupdated: normalDate })
                 let userToken = db.collection('users').doc(huid).get()
                     .then(doc => {
                         admin.database().ref(`/users/${huid}`).update({ token: doc.data().token, password: doc.data().pass });
@@ -107,6 +39,40 @@ exports.getData = functions.https.onRequest(async(request, response) => {
         })
     }
 });
+
+exports.changePass = functions.https.onRequest(async(request, response) => {
+
+    const huid = request.query.huid;
+    const newPass = request.query.pass;
+    const logincheckUrl = `https://hazirapi.herokuapp.com/logincheck?id=${huid}&pwd=${newPass}`
+    let loginCheck = false;
+
+    try {
+        await fetch(logincheckUrl)
+            .then(apiData => apiData.json())
+            .then(apiData => {
+                if (apiData.status == 'success') {
+                    loginCheck = true
+                    userName = apiData.name
+                } else if (apiData.status == 'invalid credentials') {
+                    response.send({
+                        status: 'invalid credentials'
+                    })
+                }
+            });
+    } catch (err) {
+        response.send({
+            status: 'network error'
+        })
+    }
+
+    if (loginCheck == true) {
+        db.collection('users').doc(userdata.huid).update({ pass: newPass })
+        admin.database().ref(`/users/${huid}`).update({ password: newPass })
+    }
+
+
+})
 
 exports.login = functions.https.onRequest(async(request, response) => {
 
@@ -127,7 +93,7 @@ exports.login = functions.https.onRequest(async(request, response) => {
     let userDoc = await UserRef.get()
         .then(snapshot => {
             snapshot.forEach(doc => {
-                if (doc.id == userdata.huid && doc.pass == userdata.pass) {
+                if (doc.id == userdata.huid && doc.data().pass == userdata.pass) {
                     userExists = true;
                 }
             });
@@ -240,6 +206,7 @@ exports.dataUpdateprocess = functions.runWith(runtimeOpts).pubsub.schedule('ever
                     },
                     token: token,
                 };
+                db.collection('notifications').doc(huid).collection('notifications').doc().set(message);
                 admin.messaging().send(message)
                     .then((res) => {
                         console.log('Notification sent successfully:', res)
@@ -360,7 +327,7 @@ exports.makeUppercase = functions.database.ref(`/users/{updatingUser}`)
         }
 
         console.log(message)
-
+        db.collection('notifications').doc(huid).collection('notifications').doc().set(message);
         admin.messaging().send(message)
             .then((res) => {
                 console.log('Notification sent successfully:', res)
