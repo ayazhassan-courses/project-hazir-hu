@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup, SoupStrainer
 import concurrent.futures
 
 
-def attendance_table(asoup, table_rows):
+def attendance_table(asoup, table_rows, skey):
 
     status = ""
     reason = ""
@@ -119,12 +119,12 @@ def attendance_table(asoup, table_rows):
     Attendance_Table["classcode"] = code
     Attendance_Table["coursecomponent"] = course_component
     Attendance_Table["coursesection"] = course_section
-    Attendance_Table["attendances"] = Attendance
+    Attendance_Table["skey"] = skey
     return Attendance_Table
 
 
 def scrap_it(url_huid_passw):
-    url, huid, passw = url_huid_passw[0], url_huid_passw[1], url_huid_passw[2]
+    url, huid, passw, skey = url_huid_passw[0], url_huid_passw[1], url_huid_passw[2], url_huid_passw[3]
 
     login_data = {"userid": huid, "pwd": passw}
     for_row = SoupStrainer("script", attrs={"language": "JavaScript"})
@@ -144,17 +144,29 @@ def scrap_it(url_huid_passw):
     )
 
     soup = BeautifulSoup(request_return, "lxml", parse_only=only_these)
-    table = attendance_table(soup, total_rows)
+    table = attendance_table(soup, total_rows, skey)
     return table
 
 
 def multithreading(links, huid, passw):
-    links = tuple((link, huid, passw) for link in links)
+    links = tuple((link, huid, passw, links.index(link)) for link in links)
     COURSE_DATA = []
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(links)) as executor:
 
         for each in executor.map(scrap_it, links):
-            COURSE_DATA.append(each)
+            if each != "Dropped":
+                COURSE_DATA.append(each)
 
-    return COURSE_DATA
+    keys = [x['skey'] for x in COURSE_DATA]
+    keys.sort()
+
+    Sorted_CourseDate = []
+    
+    for k in keys:
+        for c in COURSE_DATA:
+            if k == c['skey']:
+                Sorted_CourseDate.append(c)
+
+    del COURSE_DATA
+    return Sorted_CourseDate

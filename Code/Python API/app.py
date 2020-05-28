@@ -4,6 +4,7 @@ import concurrent.futures
 from flask import Flask, request
 from flask import jsonify
 from attendance import *
+import time
 
 MAIN = {}
 
@@ -44,12 +45,46 @@ def Info_and_Courses(url, huid, passw):
     links = generate_course_links(request_return, huid, passw)
     main_dict['coursedata'] = multithreading(links, huid, passw)
 
+
+    main_dict['last_updated'] = time.time()
+
     return main_dict
     
 
 @app.route("/")
 def greetings():
     return "Hazir HU API"
+
+@app.route('/logincheck')
+def login_check():
+
+    ID = request.args.get('id')
+    PASS = request.args.get('pwd')
+
+    URL = 'https://pscs.habib.edu.pk/psc/ps_4/EMPLOYEE/PSFT_HR/c/X_ATTEND_TRACKING.STDNT_ATTEND_TERM.GBL?Page=STDNT_ATTDNCE1&Action=U&EMPLID='+ID[2:]+'&INSTITUTION=HUNIV&STRM=2011&TargetFrameName=None'
+    login_data = {'userid':ID, 'pwd':PASS}
+    r = requests.post(URL, data=login_data)
+    if r.status_code == 200:
+        request_return = r.text
+        Parse_only = SoupStrainer(class_=['PSEDITBOX_DISPONLY'])
+        try:
+            name_soup = BeautifulSoup(request_return, 'lxml', parse_only=Parse_only)
+            Name = name_soup.find('span',class_='PSEDITBOX_DISPONLY',id='PERSONAL_DTSAVW_NAME').get_text()
+            if ',' in Name:
+                first_name = Name.split(',')[1]
+            else:
+                first_name = Name
+            return jsonify(
+                status = "success",
+                name = first_name)
+        except:
+            return jsonify(
+                status = 'invalid credentials')
+    else:
+        return jsonify(
+            status = 'network error')
+
+    
 
 @app.route("/login")
 def login():
@@ -59,14 +94,12 @@ def login():
 
     if isinstance(ID, str) == False or isinstance(PASS, str) == False:
         return jsonify(
-            Error =  "001",
-            Message = "Null ID or Password"
+            status = "null id or password"
         )
         
     if ID[2:].isdigit() == False:
         return jsonify(
-            Error =  "002",
-            Message = "Incorrect ID"
+            status = "incorrect id"
         )
 
     URL = 'https://pscs.habib.edu.pk/psc/ps_4/EMPLOYEE/PSFT_HR/c/X_ATTEND_TRACKING.STDNT_ATTEND_TERM.GBL?Page=STDNT_ATTDNCE1&Action=U&EMPLID='+ID[2:]+'&INSTITUTION=HUNIV&STRM=2011&TargetFrameName=None'
@@ -74,9 +107,11 @@ def login():
     try:
         return_main = Info_and_Courses(URL, ID, PASS)
     except:
-        return jsonify(error = '01', message = 'Login Failed')
+        return jsonify(
+            status = "network error"
+        )
 
     return jsonify(return_main)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run('0.0.0.0',8080)
