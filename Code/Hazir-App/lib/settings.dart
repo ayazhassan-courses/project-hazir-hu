@@ -2,6 +2,7 @@ import 'package:Hazir/features.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -149,7 +150,7 @@ class _SettingsState extends State<Settings> {
                                                 _showProgress = !_showProgress;
                                               });
                                               try {
-                                                await cloudAttendance.login();
+                                                await cloudAttendance.updatePass();
                                                 setState(() {
                                                   _showProgress = false;
                                                 });
@@ -209,7 +210,7 @@ class _SettingsState extends State<Settings> {
                                             _showProgress = false;
                                           });
                                           Navigator.of(context).pushReplacement(
-                                              MaterialPageRoute(
+                                              CupertinoPageRoute(
                                                   builder: (BuildContext context) =>
                                                       LoginPage()));
                                         } catch (e) {
@@ -293,7 +294,7 @@ class _SettingsState extends State<Settings> {
                   onPressed: () async {
                     await AttendanceCache.removeAttendanceCache();
                     Navigator.pop(context);
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(
                         builder: (BuildContext context) => LoginPage()));
                   },
                 ),

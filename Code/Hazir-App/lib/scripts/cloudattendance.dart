@@ -42,6 +42,19 @@ class CloudAttendance {
     }
   }
 
+    Future<Map<String, dynamic>> updatePass() async {
+    String url =
+        'https://us-central1-hazir-9a2c2.cloudfunctions.net/changePass?huid=$id&pass=$pass';
+    print(url);
+    Map<String, dynamic> JSONresponse = await _getJSONData(url);
+    String status = JSONresponse['status'];
+    if (status == 'password updated' || status == 'invalid credentials') {
+      return JSONresponse;
+    } else {
+      throw (status);
+    }
+  }
+
   Future<bool> updateUserDataOnCloud() async {
     String url =
         'https://us-central1-hazir-9a2c2.cloudfunctions.net/getData?huid=$id&pass=$pass';

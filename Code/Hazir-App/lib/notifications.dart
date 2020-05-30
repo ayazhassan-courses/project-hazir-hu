@@ -38,7 +38,7 @@ class NotificationList extends StatelessWidget {
     return new StreamBuilder(
       stream: Firestore.instance.collection('notifications').document(changeAttendanceprovider.id).collection('notifications').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) return new CircularProgressIndicator();
+        if (!snapshot.hasData) return Center(child: new CircularProgressIndicator());
         if(snapshot.data.documents.length==0){
           return Center(child: Text('You have no notifications'));
         }

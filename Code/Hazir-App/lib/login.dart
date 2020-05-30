@@ -6,6 +6,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -132,10 +133,10 @@ class _LoginPageState extends State<LoginPage> {
             String status = response['status'];
             if(status=='user already exists'){
               await AttendanceCache.saveIdCache(username);
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(
                   builder: (BuildContext context) => HazirHome(cachedId: username,)));
             }else if(status=='user added'){
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(
                   builder: (BuildContext context) => LoadingScreen(
                     userId: cloudAttendance.id,
                     password: cloudAttendance.pass,
