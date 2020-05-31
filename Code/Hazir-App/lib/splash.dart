@@ -34,6 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
         accentColor: kAccentColor,
         primaryTextTheme: TextTheme(title: TextStyle(color: Colors.white)),
         hintColor: Color(0xFFD4C194),
+        backgroundColor: kPrimaryColor,
+        brightness: Brightness.light,
       ),
       home: FutureBuilder(
         future: getAttendance(),

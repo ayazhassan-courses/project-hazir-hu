@@ -12,9 +12,11 @@ class CoursePage extends StatefulWidget {
 
   @override
   _CoursePageState createState() => _CoursePageState();
+
 }
 
 class _CoursePageState extends State<CoursePage> {
+
   String formatDate(String date) {
     String formattedDate;
     final f = new DateFormat('MM/dd/yyyy');
@@ -62,9 +64,7 @@ class _CoursePageState extends State<CoursePage> {
   Widget build(BuildContext context) {
     var divheight = MediaQuery.of(context).size.height;
     var divwidth = MediaQuery.of(context).size.width;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF5C2B62), //or set color with: Color(0xFF0000FF)
-    ));
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -139,6 +139,7 @@ class _CoursePageState extends State<CoursePage> {
                 height: divheight * 0.78,
                 width: divwidth,
                 child: SingleChildScrollView(
+
                     scrollDirection: Axis.vertical,
                     child: DataTable(
                       headingRowHeight: divheight * 0.08,
