@@ -29,11 +29,11 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    _dark = false;
+    _dark = true;
   }
 
   Brightness _getBrightness() {
-    return _dark ? Brightness.dark : Brightness.light;
+    return Brightness.light;
   }
 
   @override

@@ -21,8 +21,7 @@ class Notifications extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: kPrimaryColor, // status bar color
-          brightness: Brightness.light, // status bar brightness
+
           title: Text('Notifications'),
         ),
         body: NotificationList(),
@@ -38,7 +37,7 @@ class NotificationList extends StatelessWidget {
     return new StreamBuilder(
       stream: Firestore.instance.collection('notifications').document(changeAttendanceprovider.id).collection('notifications').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) return new CircularProgressIndicator();
+        if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
         if(snapshot.data.documents.length==0){
           return Center(child: Text('You have no notifications'));
         }

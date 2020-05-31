@@ -152,12 +152,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(color: Theme.of(context).primaryColor)),
       ),
     );
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: kPrimaryColor,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.black,
 
-    ));
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: ModalProgressHUD(

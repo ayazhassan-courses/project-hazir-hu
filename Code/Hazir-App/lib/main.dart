@@ -16,7 +16,11 @@ import 'features.dart';
 import 'models/attendance.dart';
 
 void main() async {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
 
+    statusBarBrightness: Brightness.light,
+    statusBarColor: kPrimaryColor// status bar color
+  ));
   runApp(SplashScreen());
 
 }
@@ -72,6 +76,7 @@ class Homepage extends StatelessWidget {
         RefreshController(initialRefresh: false);
     return SafeArea(
       child: Scaffold(
+
         floatingActionButton: FloatingActionButton(
           foregroundColor: Colors.white,
           backgroundColor: Theme.of(context).primaryColor,
