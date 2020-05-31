@@ -31,11 +31,17 @@ class _SettingsState extends State<Settings> {
     cloudAttendance = CloudAttendance(id: widget.id);
     return ModalProgressHUD(
       inAsyncCall: _showProgress,
+
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
         appBar: AppBar(
+          elevation: 0,
+          iconTheme:  IconThemeData(color: kPrimaryColor),
+          backgroundColor: Colors.transparent,
+
           title: Text(
             'Settings',
+            style: TextStyle(color: kPrimaryColor),
           ),
           actions: <Widget>[
             IconButton(
