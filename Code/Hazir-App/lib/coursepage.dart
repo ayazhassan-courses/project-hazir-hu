@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'models/attendance-single-course.dart';
 import 'models/attendance-single-day.dart';
@@ -98,9 +97,7 @@ class _CoursePageState extends State<CoursePage> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: divheight * 0.045,
-                  ),
+                  Spacer(),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 25, right: 25, bottom: 10),

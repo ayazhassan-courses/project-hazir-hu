@@ -252,8 +252,8 @@ class AttendanceCard extends StatelessWidget {
         .round()
         .toInt();
     cardFocusColor = percentage > 85
-        ? Theme.of(context).primaryColor
-        : Theme.of(context).accentColor;
+        ? kPrimaryColor
+        : kAccentColor;
     return GestureDetector(
       onTap: () {
         Navigator.push(
