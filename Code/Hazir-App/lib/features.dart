@@ -8,7 +8,7 @@ class Features{
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         textColor: kPrimaryColor,
         fontSize: 14.0);
   }
@@ -17,7 +17,7 @@ class Features{
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         textColor: kPrimaryColor,
         fontSize: 14.0);
   }

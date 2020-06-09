@@ -52,7 +52,12 @@ class _SplashScreenState extends State<SplashScreen> {
           return Container(
             color: Colors.white,
             child: Center(
-              child: Text('SPLASH'),
+              child: Text('hazir',
+              style: TextStyle(
+                decoration: TextDecoration.none,
+                color: Theme.of(context).primaryColor
+              ),
+              ),
             ),
           ); // noop, this builder is called again when the future completes
         },
