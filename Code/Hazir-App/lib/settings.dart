@@ -31,25 +31,36 @@ class _SettingsState extends State<Settings> {
     cloudAttendance = CloudAttendance(id: widget.id);
     return ModalProgressHUD(
       inAsyncCall: _showProgress,
-
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
         appBar: AppBar(
           elevation: 0,
-          iconTheme:  IconThemeData(color: kPrimaryColor),
+          iconTheme: IconThemeData(color: kPrimaryColor),
           backgroundColor: Colors.transparent,
-
           title: Text(
             'Settings',
             style: TextStyle(color: kPrimaryColor),
           ),
           actions: <Widget>[
+            
             IconButton(
               icon: Icon(Icons.brightness_4),
               onPressed: () {
                 Features.generateShortToast('Dark Mode Comming Soon');
               },
-            )
+            ),
+            IconButton(
+              icon: Icon(Icons.device_unknown),
+              onPressed: () {
+                showAboutDialog(
+                  context: context,
+                  applicationIcon: FlutterLogo(),
+                  applicationName: "About hazir",
+                  applicationVersion: "0.0.5",
+                  applicationLegalese: 'Developed by Abuzar Rasool and Faaz Abidi'
+                  );
+              },
+            ),
           ],
         ),
         body: Stack(
@@ -164,20 +175,20 @@ class _SettingsState extends State<Settings> {
                             color: Colors.red,
                           ),
                           title: Text(
-                            "Delete all data from cloud",
+                            "Delete my account and data",
                             style: TextStyle(color: Colors.red),
                           ),
                           onTap: () async {
                             Alert(
                               context: context,
                               type: AlertType.error,
-                              title: "ALERT",
+                              title: "Bye Bye",
                               desc:
-                                  "Are you sure you want to delete data from the cloud?",
+                                  "Pressing 'do it' will delete your hazir account and all of your data from our database. You longer will be our user hence won't receive any notification. However, you are welcome to join back anytime as a new user.",
                               buttons: [
                                 DialogButton(
                                   child: Text(
-                                    "YES",
+                                    "do it",
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 20),
                                   ),
@@ -265,17 +276,36 @@ class _SettingsState extends State<Settings> {
               bottom: 00,
               left: 00,
               child: IconButton(
-                icon: Icon(
-                  Icons.power_settings_new,
-                  color: Colors.white,
-                ),
-                onPressed: () async {
-                  await AttendanceCache.removeAttendanceCache();
-                  Navigator.pop(context);
-                  Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                      builder: (BuildContext context) => LoginPage()));
-                },
-              ),
+                  icon: Icon(
+                    Icons.power_settings_new,
+                    color: Colors.white,
+                  ),
+                  onPressed: () async {
+                    Alert(
+                      context: context,
+                      type: AlertType.warning,
+                      title: "Logout",
+                      desc:
+                          "Do you want to logout?",
+                      buttons: [
+                        DialogButton(
+                          child: Text(
+                            "yes, do it",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () async {
+                            await AttendanceCache.removeAttendanceCache();
+                            Navigator.pop(context);
+                            Navigator.of(context).pushReplacement(
+                                CupertinoPageRoute(
+                                    builder: (BuildContext context) =>
+                                        LoginPage()));
+                          },
+                          width: 300,
+                        )
+                      ],
+                    ).show();
+                  }),
             )
           ],
         ),
