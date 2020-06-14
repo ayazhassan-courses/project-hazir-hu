@@ -1,8 +1,9 @@
 import 'package:Hazir/colors.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:flutter/material.dart';
+
+import 'home.dart';
 import 'login.dart';
-import 'main.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -51,14 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
           }
           return Container(
             color: Colors.white,
-            child: Center(
-              child: Text('hazir',
-              style: TextStyle(
-                decoration: TextDecoration.none,
-                color: Theme.of(context).primaryColor
-              ),
-              ),
-            ),
+
           ); // noop, this builder is called again when the future completes
         },
       ),

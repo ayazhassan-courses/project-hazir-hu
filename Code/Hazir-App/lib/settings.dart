@@ -1,11 +1,11 @@
 import 'package:Hazir/features.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
 import 'colors.dart';
 import 'login.dart';
 
@@ -146,8 +146,6 @@ class _SettingsState extends State<Settings> {
                                               setState(() {
                                                 _showProgress = false;
                                               });
-                                              Features.generateLongToast(
-                                                  'Password updated sucessfully');
                                             } catch (e) {
                                               setState(() {
                                                 _showProgress = false;
@@ -194,6 +192,7 @@ class _SettingsState extends State<Settings> {
                                   ),
                                   onPressed: () async {
                                     Navigator.pop(context);
+
                                     setState(() {
                                       _showProgress = true;
                                     });
@@ -203,10 +202,12 @@ class _SettingsState extends State<Settings> {
                                       setState(() {
                                         _showProgress = false;
                                       });
-                                      Navigator.of(context).pushReplacement(
-                                          CupertinoPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  LoginPage()));
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) => LoginPage()),
+                                            (Route<dynamic> route) => false,
+                                      );
                                     } catch (e) {
                                       setState(() {
                                         _showProgress = false;
@@ -296,10 +297,12 @@ class _SettingsState extends State<Settings> {
                           onPressed: () async {
                             await AttendanceCache.removeAttendanceCache();
                             Navigator.pop(context);
-                            Navigator.of(context).pushReplacement(
-                                CupertinoPageRoute(
-                                    builder: (BuildContext context) =>
-                                        LoginPage()));
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => LoginPage()),
+                                  (Route<dynamic> route) => false,
+                            );
                           },
                           width: 300,
                         )

@@ -48,7 +48,7 @@ class CloudAttendance {
     print(url);
     Map<String, dynamic> JSONresponse = await _getJSONData(url);
     String status = JSONresponse['status'];
-    if (status == 'password updated' || status == 'invalid credentials') {
+    if (status == 'password updated') {
       return JSONresponse;
     } else {
       throw (status);

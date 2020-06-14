@@ -1,18 +1,15 @@
 import 'package:Hazir/features.dart';
-import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'colors.dart';
+import 'home.dart';
 import 'loadingscreen.dart';
-import 'main.dart';
 
 
 class LoginPage extends StatefulWidget {

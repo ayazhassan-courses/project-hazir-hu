@@ -1,12 +1,11 @@
 import 'package:Hazir/login.dart';
-import 'package:Hazir/main.dart';
-import 'package:Hazir/models/attendance.dart';
 import 'package:Hazir/scripts/attendancecache.dart';
 import 'package:Hazir/scripts/cloudattendance.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'home.dart';
 class LoadingScreen extends StatefulWidget {
   String name;
   String userId;

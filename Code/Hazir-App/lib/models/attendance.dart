@@ -4,6 +4,7 @@ import 'package:Hazir/scripts/cloudattendance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import '../features.dart';
 import 'attendance-single-course.dart';
 
 class Attendance extends ChangeNotifier{
@@ -57,22 +58,26 @@ class Attendance extends ChangeNotifier{
       await Firestore.instance.collection('users').document(id).get().then((value) => password=value['pass']).catchError((e){
         //Todo error handling
         //most probably network error would be here
-        print('Firestore update error');
+        print('Please verify your internet connection and try again');
         throw(e);
       });
     }
-
+    bool attendanceUpdated = false;
     CloudAttendance cloudAttendance = CloudAttendance(id: id,pass: password);
     try{
-      await cloudAttendance.updateUserDataOnCloud();
+      attendanceUpdated = await cloudAttendance.updateUserDataOnCloud();
     }catch(e){
       //errors while updating user data
       throw(e);
     }
-    Attendance newAttendance = await cloudAttendance.getAttendanceData();
-    last_updated = newAttendance.last_updated;
-    coursedata = newAttendance.coursedata;
-    notifyListeners();
+    if (attendanceUpdated) {
+      Attendance newAttendance = await cloudAttendance.getAttendanceData();
+      last_updated = newAttendance.last_updated;
+      coursedata = newAttendance.coursedata;
+      notifyListeners();
+      Features.generateLongToast('Refreshed Sucessfully');
+    }
+
 
   }
 
