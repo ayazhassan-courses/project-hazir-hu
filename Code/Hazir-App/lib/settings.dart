@@ -54,9 +54,10 @@ class _SettingsState extends State<Settings> {
               onPressed: () {
                 showAboutDialog(
                   context: context,
-                  applicationIcon: FlutterLogo(),
+                    applicationIcon: Image.asset(
+                      'assets/app_icon.png', scale: 5,),
                   applicationName: "About hazir",
-                  applicationVersion: "0.0.5",
+                    applicationVersion: "0.0.1",
                   applicationLegalese: 'Developed by Abuzar Rasool and Faaz Abidi'
                   );
               },
@@ -304,7 +305,7 @@ class _SettingsState extends State<Settings> {
                                   (Route<dynamic> route) => false,
                             );
                           },
-                          width: 300,
+
                         )
                       ],
                     ).show();
