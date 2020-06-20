@@ -34,8 +34,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final logo = SizedBox(
-      width: 250.0,
-        height: 250.0,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width * 0.70,
+        height: MediaQuery
+            .of(context)
+            .size
+            .width * 0.70,
         child: FlareActor(
           'assets/loading.flr',
           fit: BoxFit.fitHeight,
