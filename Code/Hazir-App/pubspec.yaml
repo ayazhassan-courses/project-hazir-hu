@@ -73,11 +73,13 @@ flutter:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
   assets:
+    - assets/
     - animation.flr
     - splash_hazir.flr
     - login.flr
     - finallogo.png
     - assets/app_icon.png
+    - login-bg.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
