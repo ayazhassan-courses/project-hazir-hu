@@ -181,9 +181,9 @@ class _SettingsState extends State<Settings> {
                             Alert(
                               context: context,
                               type: AlertType.error,
-                              title: "Bye Bye",
+                              title: "Warning",
                               desc:
-                                  "Pressing 'do it' will delete your hazir account and all of your data from our database. You longer will be our user hence won't receive any notification. However, you are welcome to join back anytime as a new user.",
+                                  "Pressing 'do it' will delete your hazir account and all of your data from our database.",
                               buttons: [
                                 DialogButton(
                                   child: Text(
